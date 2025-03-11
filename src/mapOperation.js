@@ -320,51 +320,6 @@ export default class OLMAP {
 
 
   /**
-   * 根据经纬度坐标画圆 注意  注意该函数 不可轻易复用！
-   * @Tips 这个函数主要适用于需求是一个圆 加上文字在圆的右边的浮动、、文字在圆的边上的位置没有写
-   * @param {*} centerPosition 中心点经纬度坐标
-   * @param {*} radius 半径 单位为米 可以为空，默认值为2000
-   * @param {*} callback 自定义设置 比如style 比如 设置属性 等等
-   * @param {*} color 线条颜色
-   * @param {*} text 提示文字
-   * @return {*} features
-   */
-  drawCircle(centerPosition, radius = 2000, callback, color = '#fff', text = '') {
-    let features = []
-    let coords;
-    for (let i = 0; i < centerPosition.length; i++) {
-      let EPSGTransCoord = fromLonLat(centerPosition[i])
-      let circle = new Circle(EPSGTransCoord, radius)
-      let feature = new Feature({
-        geometry: fromCircle(circle).transform('EPSG:3857', 'EPSG:4326')
-      })
-      let coord = feature.getGeometry().getLinearRings()[0].getCoordinates()[0]
-      coords = feature.getGeometry().getLinearRings()[0].getCoordinates();
-      let featureText = new Feature({
-        geometry: new Point(coord)
-      })
-      featureText.setStyle(new Style({
-        text: new Text({
-          font: '14px Microsoft YaHei', text: text, textAlign: "right", // 对齐方式
-          textBaseline: "middle", // 文本基线
-          fill: new Fill({
-            color: color
-          }), offsetX: -5
-        })
-      }))
-
-      if (callback !== undefined && typeof callback === 'function') {
-        callback(feature, i, color, coords)
-      }
-
-      features.push(feature, featureText)
-
-    }
-    return {features, coords};
-  }
-
-
-  /**
    * 绘制椭圆 这个函数用于 表示聚焦状态
    * @param {*} centerPosition coord数组
    * @param {*} baseNum 表示基数 默认值乘以基数

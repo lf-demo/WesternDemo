@@ -44,7 +44,7 @@ var win = self, doc = win.document, fromCharCode = String.fromCharCode, push = A
   };
   Gordon.Stream.prototype = {
     readByteAt: function (pos) {
-      return this._buffer.charCodeAt(pos);
+      return this._buffer.charCodeAt(pos)
     },
 
     readNumber: function (numBytes, bigEnd) {
@@ -54,22 +54,22 @@ var win = self, doc = win.document, fromCharCode = String.fromCharCode, push = A
         while (numBytes > 0) {
           val = (val << 8) | this.readByteAt(this.offset);
           this.offset++;  // 避免在表达式中自增
-          numBytes--;  // 变量递减从表达式中拆分出来
+          numBytes--  // 变量递减从表达式中拆分出来
         }
       } else {
         let start = this.offset;
-        let end = start + numBytes;
+        let end = start + numBytes
 
         while (end > start) {
           end--;  // 变量递减从表达式中拆分出来
-          val = (val << 8) | this.readByteAt(end);
+          val = (val << 8) | this.readByteAt(end)
         }
 
-        this.offset += numBytes;
+        this.offset += numBytes
       }
 
-      this.align();
-      return val;
+      this.align()
+      return val
     },
 
 
@@ -365,32 +365,6 @@ var win = self, doc = win.document, fromCharCode = String.fromCharCode, push = A
     },
   };
 
-  function buildHuffTable(bitLengths) {
-    var numLengths = bitLengths.length, blCount = [], maxBits = max.apply(Math, bitLengths), nextCode = [], code = 0,
-      table = {}, i = numLengths;
-    while (i--) {
-      var len = bitLengths[i];
-      blCount[len] = (blCount[len] || 0) + (len > 0);
-    }
-    for (var i = 1; i <= maxBits; i++) {
-      var len = i - 1;
-      if (undefined == blCount[len]) {
-        blCount[len] = 0;
-      }
-      code = (code + blCount[i - 1]) << 1;
-      nextCode[i] = code;
-    }
-    for (var i = 0; i < numLengths; i++) {
-      var len = bitLengths[i];
-      if (len) {
-        table[nextCode[len]] = {
-          length: len, symbol: i
-        };
-        nextCode[len]++;
-      }
-    }
-    return table;
-  }
 
   function decodeSymbol(s, table) {
     var code = 0, len = 0;
