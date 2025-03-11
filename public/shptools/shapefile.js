@@ -241,17 +241,22 @@
       return record
     },
     _readPoints: function (record) {
-      var s = this.stream,
-        points = [],
-        npoints = record.numPoints || (record.numPoints = s.readSI32())
+      let s = this.stream;
+      let points = [];
 
-      while (npoints--)
+      if (!record.numPoints) {
+        record.numPoints = s.readSI32();
+      }
+      let npoints = record.numPoints;
+
+      while (npoints--) {
         points.push({
           x: s.readDouble(),
-          y: s.readDouble()
-        })
+          y: s.readDouble(),
+        });
+      }
 
-      record.points = points
+      record.points = points;
 
       return record
     },
@@ -291,16 +296,15 @@
       ]
       geojson.features = features
 
-      for (var r = 0, record; record = records[r]; r++) {
-        feature = {}, fbounds = record.bounds, points = record.points, parts = record.parts
-        feature.type = "Feature"
-        if (record.shapeType !== 'Point') {
-          feature.bbox = [
-            fbounds.left,
-            fbounds.bottom,
-            fbounds.right,
-            fbounds.top
-          ]
+      for (let r = 0; r < records.length; r++) {
+        const record = records[r]; // 在循环内部赋值，避免在条件中进行赋值
+        let feature = {};
+        let { bounds: fbounds, points, parts, shapeType } = record;
+
+        feature.type = "Feature";
+
+        if (shapeType !== "Point") {
+          feature.bbox = [fbounds.left, fbounds.bottom, fbounds.right, fbounds.top];
         }
         geometry = feature.geometry = {}
 
@@ -316,27 +320,28 @@
             geometry.type = (record.shapeType == "PolyLine" ? "LineString" : "MultiPoint")
             gcoords = geometry.coordinates = []
 
-            for (var p = 0; p < points.length; p++) {
-              var point = points[p]
-              gcoords.push([point.x, point.y])
+            for (let p = 0, len = points.length; p < len; p++) {
+              const {x, y} = points[p]; // 解构赋值优化
+              gcoords.push([x, y]);
             }
             break
           case "Polygon":
             geometry.type = "Polygon"
             gcoords = geometry.coordinates = []
 
-            for (var pt = 0; pt < parts.length; pt++) {
-              var partIndex = parts[pt],
-                part = [],
-                point
+            for (let pt = 0; pt < parts.length; pt++) {
+              const partIndex = parts[pt];
+              const partEnd = parts[pt + 1] ?? points.length; // 计算结束索引，避免每次循环重复计算
+              const part = [];
 
-              // partIndex 0 == main poly, partIndex > 0 == holes in poly
-              for (var p = partIndex; p < (parts[pt + 1] || points.length); p++) {
-                point = points[p]
-                part.push([point.x, point.y])
+              for (let p = partIndex; p < partEnd; p++) {
+                const { x, y } = points[p]; // 使用解构赋值
+                part.push([x, y]);
               }
-              gcoords.push(part)
+
+              gcoords.push(part);
             }
+
             break
           default:
         }
