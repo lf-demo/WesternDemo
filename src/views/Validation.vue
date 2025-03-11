@@ -18,7 +18,7 @@
         </div>
         <div class="r_part">
             <span style="font-size:10pt;">
-                
+
             </span>
             <span style="font-size:20pt;margin-left:40%">
                 台风分类以及强度估计
@@ -82,7 +82,7 @@
                     <tr>
                         <th style="font-size:10pt; width: 90px;">
                             (c) 台风分类个例验证图
-                        </th> 
+                        </th>
                         <td>
                             <tr>
                                 <td style="padding-left: 15px;">
@@ -123,7 +123,7 @@
                                     <p style="text-align: center;">时间：20211228 <br>实际等级：超强台风;</p>
                                 </td>
 
-                                    
+
                                     </tr>
                                     <tr>
                                         <td style="padding-left: 15px;">
@@ -165,11 +165,8 @@
                                     <p style="text-align: center;">时间：20210520 <br>实际等级：超强台风;</p>
                                 </td>
 
-                            
+
                             </tr>
-                    </td>                 
-                            
-                    </tr>
                 </table>
 
                 <table style="margin-top: 80px;">
@@ -244,25 +241,24 @@
                                     <td>0.9458</td>
                                     <td>0.9482</td>
                                 </tr>
-                            
+
                             </table>
-                        </td> 
+                        </td>
                     </tr>
                 </table>
 
             </div>
         </div>
     </div>
-    
+
 <div id="footerWrapper"> <bottom></bottom></div>
-    </table>
+
   </div>
 </template>
 
 <script>
 import Headers from "@/components/header2"
 import bottom from "@/components/bottom.vue"
-import '@/assets/css/test.css'
 export default {
   name: 'Validation.vue',
   data () {

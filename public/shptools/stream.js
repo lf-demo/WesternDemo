@@ -223,7 +223,7 @@ var win = self, doc = win.document, fromCharCode = String.fromCharCode, push = A
     readUB: function (numBits, lsb) {
       var t = this, val = 0;
       for (var i = 0; i < numBits; i++) {
-        if (8 == t._bitOffset) {
+        if (8 === t._bitOffset) {
           t._bitBuffer = t.readUI8();
           t._bitOffset = 0;
         }

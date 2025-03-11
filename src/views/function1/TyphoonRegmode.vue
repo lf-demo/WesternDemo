@@ -8,7 +8,7 @@
       <div class="head-right"><span id="time"></span><span>Admin</span></div>
     </header> -->
     <section class="section commanBox">
-   
+
         <!--左侧区域-->
         <div class="boxLeft">
             <!--视频监控-->
@@ -26,11 +26,11 @@
                     <span class="BoxconTopLeft">经纬度(xxx--xxx) &nbsp; &nbsp; 台风概率：92%</span><span
                         class="BoxconTopRight"><img src="@/assets/images/ico.png" /> </span></div>
                 <div class="boxLeftVideoBoxCon2">
-                    
+
                 </div>
             </div>
             <div class="clear"></div>
-            
+
         </div>
         <div class="boxCenter">
                 <!--地图区域-->
@@ -45,34 +45,30 @@
                         <li>经纬度范围：xxxx</li>
                         <li>热带气旋强度等级：xxxx</li>
                         <li>最大持续风速：xxxx</li>
-    
+
                     </ul>
                 </div>
         </div>
-    
+
     </section>
 
   </main>
 </template>
 
 <script>
-// import "@/assets/css/bootstrap.min.css";
-import "@/assets/css/base.css";
-import "@/assets/css/index.css";
-export default {};
 </script>
 
 <style>
 .boxLeftVideoBoxCon {
     width: 98%;
     background-image: url("@/assets/img/1.png");
-    background-size: 100% 100%; 
+    background-size: 100% 100%;
 }
 
 .boxLeftVideoBoxCon2 {
     width: 95%;
     background-image: url("@/assets/img/2.png");
-    background-size: 100% 100%; 
+    background-size: 100% 100%;
 }
 
 ul {

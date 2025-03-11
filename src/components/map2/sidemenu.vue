@@ -16,16 +16,16 @@
                             <!-- <div>维度/经度 (5deg)</div> -->
                             <div>纬度/经度</div>
                     </button>
-                    
+
                     <!-- <button id='geo3' type='button' value='3'>
                         <div>River</div>
                     </button> -->
                 </div>
 
-        
+
 
                 <div id='user_location'>
-                    <div class=' sublbl'>位置变更 
+                    <div class=' sublbl'>位置变更
                     </div>
                     <table>
                         <tr>
@@ -45,7 +45,7 @@
                         <button type='button' name='move_c' style=" font-size:13px;padding:1px 0" v-on:click="movepoint">移动中心</button>
                         <!-- <button type='button' name='save_c'>Save Location to Cookie</button> -->
                         <!-- <button type='button' name='clear_c'>Clear cookie</button> -->
-                        
+
                     </div>
                 </div>
 
@@ -56,7 +56,7 @@
 <script>
 
 export default {
-    
+
   name: 'sidemenu.vue',
   props:["currentZoom","pointLonLat"],
 
@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     mapchange(){
-        this.$parent.clearmap() 
+        this.$parent.clearmap()
         var button = document.getElementById('geo0');
         if(this.geo0clicked){
             button.style.backgroundColor = 'rgb(60, 60, 60)';
@@ -117,7 +117,7 @@ export default {
             return null
         }
 
-        this.$parent.movepoint(this.lon,this.lat,this.zoom) 
+        this.$parent.movepoint(this.lon,this.lat,this.zoom)
     },
     grib(){
         this.$parent.checkgrid()
@@ -134,18 +134,16 @@ export default {
   watch:{
     pointLonLat(){
         document.getElementById('ulat').value=this.pointLonLat[1].toFixed(3)
-        document.getElementById('ulon').value=this.pointLonLat[0].toFixed(3) 
-        document.getElementById('uzoom').value=this.currentZoom.toFixed(1) 
+        document.getElementById('ulon').value=this.pointLonLat[0].toFixed(3)
+        document.getElementById('uzoom').value=this.currentZoom.toFixed(1)
 
     },
     currentZoom(){
-        document.getElementById('uzoom').value=this.currentZoom.toFixed(1) 
+        document.getElementById('uzoom').value=this.currentZoom.toFixed(1)
     }
   },
 }
 </script>
 
 <style scoped>
-@import '../../assets/css/sidemenu.css';
-/* @import '../../assets/css/jquery'; */
 </style>

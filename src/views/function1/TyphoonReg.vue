@@ -38,7 +38,7 @@
                         <li>经纬度范围：30°E-135°E 60°S-40°N</li>
                         <!-- <li>热带气旋强度等级：xxxx</li> -->
                         <!-- <li>最大持续风速：xxxx</li> -->
-    
+
                     </ul>
                 </div>
          </div>
@@ -47,8 +47,6 @@
 </template>
 
 <script>
-import "@/assets/css/base.css";
-import "@/assets/css/index.css";
 export default {};
 </script>
 
@@ -70,13 +68,13 @@ export default {};
     margin: 2%;
     /* margin: 0 auto; */
     background-image: url("@/assets/img/1.png");
-    background-size: 100% 100%; 
+    background-size: 100% 100%;
 }
 
 .boxLeftVideoBoxCon2 {
     width: 95%;
     background-image: url("@/assets/img/2.png");
-    background-size: 100% 100%; 
+    background-size: 100% 100%;
 }
 
 ul {

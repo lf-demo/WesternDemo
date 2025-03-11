@@ -1,10 +1,10 @@
 /**
 * 模版
-**/ 
+**/
 
 <template>
     <div>
-        
+
     </div>
 </template>
 
@@ -17,7 +17,7 @@ export default {
   name: "template",
   // 模块数据
   data() {
-    //数据  
+    //数据
     return {};
   },
   // 注册组件
@@ -51,8 +51,4 @@ export default {
 </script>
 // scoped 样式只在本组件使用
 <style scoped>
-/**
- * 导入css样式组件
- * @import "../assets/css/components/index.css";
- */
 </style>
