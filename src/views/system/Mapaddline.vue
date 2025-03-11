@@ -45,14 +45,6 @@ export default {
   data() {
     return {
       map: null,
-      // 瓦片引入地址 nginx
-      // mapUrl: `http://127.0.0.1:9098/tiles/{z}/{x}/{y}.png`
-      // 瓦片本地引入 瓦片等级越高加载编译越慢
-      // 在 public 下新建 tiles 文件夹，将下好的瓦片放进去
-
-      //添加这个范围 经度-最小，纬度-最小，经度-最大，纬度-最大
-      // mapUrl: `http://127.0.0.1:9089/tiles/{z}/{x}/{y}.png`
-      // mapUrl: `http://127.0.0.1:9089/maps/overlay/{z}/{x}/{y}.png`
       mapUrl: `http://127.0.0.1:9089/maps/satellite/{z}/{x}/{y}.jpg`,
       overlayInfo: null,
       overlayTable: null,
@@ -64,109 +56,8 @@ export default {
       pointLon: null,
       pointLat: null,
       pointInfo: null,
-      wind: [{
-        id: 1,
-        lat: 10.858592623502162,
-        lng: 84.84162294291296,
-        name: "台风1",
-        wind: 2,
-      }, {
-        id: 2,
-        lat: 8.046038432,
-        lng: 85.4491131,
-        name: "台风2",
-        wind: 3,
-      },
-        {
-          id: 3,
-          lat: 5.8848155,
-          lng: 86.12413,
-          name: "台风3",
-          wind: 4,
-        },
-        {
-          id: 4,
-          lat: 1.0291548,
-          lng: 88.3149689,
-          name: "台风4",
-          wind: 5,
-        }
-      ],
-      currentwind: {
-        id: 1,
-        lat: 10.858592623502162,
-        lng: 84.84162294291296,
-        name: "台风1",
-        wind: 1,
-      },
-      prewind: {
-        id: 1,
-        lat: 1.0291548,
-        lng: 88.3149689,
-        name: "台风2",
-        wind: 2,
-      },
-      data: [{
-        id: 1,
-        lat: 21,
-        lng: 89.5,
-        name: "Point A",
-        properties: {
-          // 标记属性
-          info: "This is Point A",
-          catagory: 1,
-          typename: "种类1",
-        },
-      },
-        {
-          id: 2,
-          lat: 24,
-          lng: 87,
-          name: "Point B",
-          properties: {
-            // 标记属性
-            info: "This is Point B",
-            catagory: 2,
-            typename: "种类2",
-          },
-        },
-        {
-          id: 3,
-          lat: 26,
-          lng: 93,
-          name: "Point C",
-          properties: {
-            // 标记属性
-            info: "This is Point C",
-            catagory: 1,
-            typename: "种类1",
-          },
-        },
-        {
-          id: 4,
-          lat: 33,
-          lng: 87,
-          name: "Point B",
-          properties: {
-            // 标记属性
-            info: "This is Point B",
-            catagory: 2,
-            typename: "种类2",
-          },
-        }, {
-          id: 5,
-          lat: 29,
-          lng: 90,
-          name: "Point B",
-          properties: {
-            // 标记属性
-            info: "This is Point B",
-            catagory: 2,
-            typename: "种类2",
-          },
-        }],
-
-      // mapUrl: `D:\\tool\\nginx-1.6.3\\nginx-1.6.3\\tiles/{z}/{x}/{y}.png`
+      wind: [],
+      data: [],
     }
   },
   components: {
@@ -178,8 +69,6 @@ export default {
   mounted() {
     this.initMap()
     this.createWindMarker()
-    // this.getMarkerData(1)
-    // this.createByType(1)
   },
   methods: {
     // 初始化地图
