@@ -345,15 +345,19 @@
       if (this._addDataAfterLoad) this.addDBFDataToGeoJSON(this._addDataAfterLoad);
     },
     addDBFDataToGeoJSON: function (dbfData) {
-      if (!this.geojson) return (this._addDataAfterLoad = dbfData)
+      if (!this.geojson) {
+        this._addDataAfterLoad = dbfData;
+        return;
+      }
 
-      this.dbf = dbfData
+      this.dbf = dbfData;
+      const { features } = this.geojson;
+      const { records } = dbfData;
+      const len = features.length;
 
-      var features = this.geojson.features,
-        len = features.length,
-        records = dbfData.records
-
-      while (len--) features[len].properties = records[len]
+      for (let i = 0; i < len; i++) {
+        features[i].properties = records[i];
+      }
     }
   }
 
