@@ -5,19 +5,11 @@
 const timestampToTime = (timestamp) => {
     let date = new Date(timestamp) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
     let Y = date.getFullYear() + '-'
-    let M =
-        (date.getMonth() + 1 < 10 ?
-            '0' + (date.getMonth() + 1) :
-            date.getMonth() + 1) + '-'
-    let D =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' '
-    let h =
-        (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
-    let m =
-        (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) +
-        ':'
-    let s =
-        date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+    let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+    let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' '
+    let h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
+    let m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
+    let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
     return Y + M + D + h + m + s
 };
 /**
@@ -35,9 +27,9 @@ const setStore = (name, content) => {
  * 获取localStorage
  */
 const getStore = name => {
-    if (!name) return;
+    if (!name) return null;  // 统一返回类型
     return window.localStorage.getItem(name);
-}
+};
 
 /**
  * 删除localStorage
@@ -59,15 +51,19 @@ function setCookie(name, value, day) {
 /**
  * 获取cookie
  **/
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, '\\$&'); // 转义特殊字符
+}
+
 function getCookie(name) {
-    let reg = RegExp(name + '=([^;]+)');
-    let arr = document.cookie.match(reg);
-    if (arr) {
-        return arr[1];
-    } else {
-        return '';
-    }
+    // Safely escape the user-provided cookie name
+    const escapedName = encodeURIComponent(name);
+    // Create a regular expression for matching the cookie name
+    const reg = new RegExp('(^|;)\\s*' + escapedName + '=([^;]*)');
+    let match = document.cookie.match(reg);
+    return match ? decodeURIComponent(match[2]) : ''; // If found, return the cookie value
 };
+
 
 /**
  * 删除cookie
@@ -77,14 +73,8 @@ function delCookie(name) {
 };
 
 /**
- * 导出 
+ * 导出
  **/
 export {
-    timestampToTime,
-    setStore,
-    getStore,
-    removeStore,
-    setCookie,
-    getCookie,
-    delCookie
+    timestampToTime, setStore, getStore, removeStore, setCookie, getCookie, delCookie
 }
