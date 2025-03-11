@@ -270,31 +270,6 @@ export default class OLMAP {
   }
 
   /**
-   * 绘制要素点 同时加入地图图层
-   * @param {coordinate} 坐标数组 接收经纬度坐标
-   * @param {Function} callback 这个函数参数用于对feature进行自定义的设置
-   * @return {features} 要素数组
-   */
-  drawPoint(coordinate, callback) {
-    // 存放转换成EPSG: 3857位置数组
-    let positions = [];
-    // 要素数组
-    let features = [];
-    type(coordinate) == 'array' ? positions = coordinate : [coordinate];
-    for (let i in positions) {
-      let feature = new Feature({
-        geometry: new Point(positions[i])
-      })
-      // 如果callback 没有传入参数
-      if (callback !== undefined) {
-        callback(feature, i);
-      }
-      features.push(feature);
-    }
-    return features;
-  }
-
-  /**
    * 绘制两点之间的线条
    * @param {pointArr} 经纬度数组
    * @return {feature} 要素
