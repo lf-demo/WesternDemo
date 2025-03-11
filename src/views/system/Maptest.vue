@@ -6,6 +6,9 @@
 </template>
 <script>
 // 此处引用替换即可
+import 'ol/ol.css'
+import Draw from 'ol/interaction/Draw.js';
+import ol from 'ol'
 import TileLayer from 'ol/layer/Tile'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'

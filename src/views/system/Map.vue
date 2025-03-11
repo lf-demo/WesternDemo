@@ -26,6 +26,8 @@ import mood from '@/components/map/mood'
 import card from '@/components/map/card'
 import windcard from '@/components/map/windcard'
 import datatable from '@/components/map/dataChart'
+import 'ol/ol.css'
+// import TileLayer from 'ol/layer/Tile'
 import XYZ from 'ol/source/XYZ'
 import { Map, View, Feature, Overlay } from 'ol'
 import { fromLonLat, transform,Projection } from 'ol/proj'
@@ -50,7 +52,19 @@ export default {
   data() {
     return {
       map: null,
+      // 瓦片引入地址 nginx
+      // mapUrl: `http://127.0.0.1:9098/tiles/{z}/{x}/{y}.png`
+      // 瓦片本地引入 瓦片等级越高加载编译越慢
+      // 在 public 下新建 tiles 文件夹，将下好的瓦片放进去
+      // mapUrltitle:`http://127.0.0.1:8088/maps/overlay/{z}/{x}/{y}.png`,
       mapUrltitle:`/maps/overlay/{z}/{x}/{y}.png`,
+          //添加这个范围 经度-最小，纬度-最小，经度-最大，纬度-最大
+      // mapUrl: `http://127.0.0.1:9089/tiles/{z}/{x}/{y}.png`
+      // mapUrl: `http://127.0.0.1:9089/maps/overlay/{z}/{x}/{y}.png`,
+      // mapUrl: `http://127.0.0.1:8088/maps/overlay/{z}/{x}/{y}.png`,
+      // mapUrl: `http://127.0.0.1:9089/maps/roadmap/{z}/{x}/{y}.png`,
+      // mapUrl: `http://127.0.0.1:8088/maps/roadmap/{z}/{x}/{y}.png`,
+      // mapUrl: `http://127.0.0.1:8088/maps/roadmap/{z}/{x}/{y}.png`,
       mapUrl: `/maps/roadmap/{z}/{x}/{y}.png`,
       // mapUrl: `http://127.0.0.1:8088/maps/satellite/{z}/{x}/{y}.jpg`,
       // mapUrl: `http://127.0.0.1:9089/maps/satellite/{z}/{x}/{y}.jpg`,
@@ -74,7 +88,37 @@ export default {
       xuegailayer:null,
       xueshenlayer:null,
       snowdeeptoolbar:null,
-      wind:[
+      wind:[{
+        id:1,
+        lat: -12.782003150495882,
+        lng: 75.76483286783369,
+        date:"2022-01-25",
+        name:"台风1",
+        wind:2,
+      }, 
+      {
+        id:5,
+        lat: -13.016729566396549,
+        lng: 72.68734038075482,
+        name:"台风2",
+        date:"2022-01-24",
+        wind:3,
+      },{
+        id:2,
+        lat: -13.753958059670964,
+        lng: 70.76752660452871,
+        name:"台风2",
+        date:"2022-01-23",
+        wind:3,
+      }, 
+      {
+        id:3,
+        lat:-14.831008643808147,
+        lng: 68.89823576091288,
+        name:"台风3",
+        date:"2022-01-22",
+        wind:4,
+      }
       ],
       currentwind:{
         id:1,
@@ -115,6 +159,7 @@ export default {
           },
         }],
       
+      // mapUrl: `D:\\tool\\nginx-1.6.3\\nginx-1.6.3\\tiles/{z}/{x}/{y}.png`
     }
   },
   components: {
@@ -129,6 +174,13 @@ export default {
   mounted() {
     this.initMap()
     this.createWindMarker()
+    // this.getMarkerData(1)
+    // this.createByType(1)
+    // 读取 JSON 文件
+    // axios.get('')
+    // console.log(station_data)
+    // console.log(buoy_data)
+
   },
   methods: {
     // 初始化地图
@@ -173,7 +225,29 @@ export default {
           
         
       })
+      // // 定义栅格数据的投影信息
+      // const projection = new Projection({
+      //   code: 'EPSG:4326',
+      //   // code: 'EPSG:3857',
+      //   units: 'degrees',
+      //   extent: [83.63764452794805, 45.522127022756756, 94.14344177572586, 50.440403203311135]
+      // });
+      // const imageLayer = new ImageLayer({
+      //   source: new ImageStatic({
+      //     url:`http://127.0.0.1:9089/maps/img/test.tif`,
+      //     projection: projection,
+      //     imageExtent: [83.63764452794805, 45.522127022756756, 94.14344177572586, 50.440403203311135]
+      //     // imageExtent: [-180, -90, 180, 90]
+      //   })
+      // });
+      // console.log("imageLayer.url,",imageLayer.url)
+      // this.map.addLayer(imageLayer);
+      // 初始化地图之后就将弹框挂载好，后续只是修改显示的位置
             const testData = JSON.parse(localStorage.getItem('testData'));
+
+      if(!testData || testData == null || testData==[]){
+       testData = this.savatestdata()
+      }
       this.data = testData
       this.createOverlayInfo()
       this.createOverlayTable()
@@ -208,6 +282,40 @@ export default {
           // item.name = '浮标'
           testdata.push(item)
       }
+    // for(var i =0;i<57;i++){
+    //     var item1 = {
+    //       id: 10+i,
+    //       lat: 18.161447635552065-Math.random() * 27,
+    //       lng: 90+Math.random() * 27,
+    //       name: "浮标",
+    //       properties: {
+    //         // 标记属性
+    //         info: "This is Point B",
+    //         catagory:1,
+    //         typename:"浮标",
+    //       },
+    //     }
+    //     var item2 = {
+    //       id: 2,
+    //       lat: 24+Math.random() * 27,
+    //       lng: 87+Math.random() * 27,
+    //       name: "站点",
+    //       properties: {
+    //         // 标记属性
+    //         info: "This is Point B",
+    //         catagory:2,
+    //         typename:"种类2",
+    //       },
+    //     }
+    //     // console.log((this.data).length)
+    //     // console.log((this.data).length)
+    //     testdata.push(item1)
+    //     testdata.push(item2)
+    //     if(i ==1){
+    //       console.log(item1)
+    //       console.log(item2)
+    //     }
+    //   }
 
     // 将数据保存到本地存储
     localStorage.setItem('testData', JSON.stringify(testdata));
@@ -263,6 +371,27 @@ export default {
       return marker;
     },
     createMarker(coord,catagory) {
+        
+      // // 创建标记要素
+      // let marker = new Feature({
+      //   id: coord.id,
+      //   geometry: new Point(coord.point),
+      //   name: coord.name,
+      //   info: coord.properties.info,
+      //   latlng:coord.point,
+      //   catagory:coord.properties.catagory,
+      //   typename:coord.properties.typename,
+      // });
+
+      // // 设置标记样式
+      // marker.setStyle(
+      //   new Style({
+      //     image: new Icon({
+      //       src: require("@/assets/marker-icon.png"),
+      //       scale: 1,
+      //     }),
+      //   })
+      // );
       var layer = null
       var marker = this.setTypeFeature(coord,catagory)
       const markerSource = new VectorSource({
@@ -282,7 +411,53 @@ export default {
       }
       this.map.addLayer(
         layer
-      );
+      ); 
+      // if(catagory ==1){
+      //   if( this.layer1 == null){
+      //     var marker = this.setTypeFeature(coord,catagory)
+      //     const markerSource = new VectorSource({
+      //       features: [marker],
+      //     });
+      //     this.layer1 =new VectorLayer({
+      //         source: markerSource,
+      //       })
+      //     console.log(this.layer1)
+      //     this.map.addLayer(
+      //       this.layer1
+      //     ); 
+      //   }
+      //   else{
+      //     console.log("种类",catagory,"已添加")
+      //   }
+      // }else if(catagory ==2){
+      //     if( this.layer2 == null){
+      //       var marker = this.setTypeFeature(coord,catagory)
+      //       const markerSource = new VectorSource({
+      //         features: [marker],
+      //       });
+      //       this.layer2 = new VectorLayer({
+      //           source: markerSource,
+      //         })
+      //       this.map.addLayer(
+      //         this.layer2
+      //       ); 
+      //     }
+      //     else{
+      //       console.log("种类",catagory,"已添加")
+      //     }
+      // }
+      
+      
+    //   // 存储标记信息
+    //   this.markers.push({
+    //     id: coord.id,
+    //     coordinate: coord.point,
+    //     name: coord.name,
+    //     properties: {
+    //       // 标记属性
+    //       info: coord.properties.info,
+    //     },
+    //   });
     },
     removeMarker(coord,catagory) {
         
@@ -569,6 +744,14 @@ export default {
         
       }
         src = color+".png"
+      // if(time == 1)//1表示当前
+      //   // src = "@/assets/img/wind"+color+".png"
+      //    src = `wind${color}.png`
+
+      // if(time == 2)//1表示当前
+      //   src = "prewind"+color+".png"
+      // console.log(color)
+      // console.log(src)
       return color
 
     },
@@ -632,6 +815,37 @@ export default {
         // if(i == 0){
         // if(i != 0){
         var color = this.checkpic(w.wind,1)
+        // console.log(color)
+        // if(zoom <6){
+        //     // feature.setStyle(null);
+        //     this.map.removeLayer(feature)
+        //     feature.setStyle(
+        //       new Style({
+        //         image: new CircleStyle({
+        //         radius: 15-9+zoom,
+        //         stroke: new Stroke({
+        //           // color: "blue",
+        //           color:'black',
+        //         }),
+        //         fill: new Fill({
+        //           // color: "rgba(24,144,255,100)",
+        //           color: ''+color,
+        //         }),
+        //       }),
+        //       text: new Text({
+        //         text: (lenth-i).toString(),
+        //         fill: new Fill({
+        //           color: "#FFF",
+        //         }),
+        //         font: "11px Calibri,sans-serif",
+        //         stroke: new Stroke({
+        //           color: "red",
+        //           width: 4,
+        //         }),
+        //       }),
+        //     }));
+        //   }else{
+            // feature.setStyle(null);
             feature.setStyle(
               new Style({
                 image: new Icon({
@@ -857,6 +1071,19 @@ export default {
   top:90px;
   right: 15px;
   /* left: 300px; */
+}
+.dialogmask {
+    /* position: fixed; */
+    position: absolute;
+    top: 82px;
+    left:60px;
+    height:calc(100vh-90px-47px);
+    min-height: 859px;
+    /* width: calc(100vh-64px) !important; */
+    width: 1843px;
+    z-index: 999;
+    display: none;
+
 }
 
 .opacity { /*遮罩浑浊处理*/

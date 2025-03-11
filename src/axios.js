@@ -23,7 +23,7 @@ axios.interceptors.request.use(config => {
 //配置后置拦截
 axios.interceptors.response.use(response=>{
     let res = response.data; 
-    if(res.code === 200){
+    if(res.code == 200){
       return response
     }else{ 
         Element.Message.error("密码错误",{duration : 2*1000}) 
@@ -40,7 +40,7 @@ axios.interceptors.response.use(response=>{
       console.log(error.message)
       console.log("-------------------------")
   }
-    if(error.response.status === 401){
+    if(error.response.status == 401){
       store.commit('REMOVE_INFO')//清空token userinfo
       router.push("/login")  //跳转登录页面
     } 

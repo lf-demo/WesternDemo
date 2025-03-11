@@ -16,18 +16,17 @@
  */
 import "ol/ol.css";
 import Map from "ol/Map";
-import {Tile as TileLayer, Vector as VectorLayer} from "ol/layer";
+import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import View from "ol/View";
 import Overlay from 'ol/Overlay';
-import {WMTS as WMTS, Vector as VectorSource, XYZ} from "ol/source";
+import { WMTS as WMTS, Vector as VectorSource, XYZ } from "ol/source";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
-import {getTopLeft, getWidth} from "ol/extent";
-import {fromLonLat, get as getProjection} from "ol/proj";
-import {Feature} from "ol";
-import {Point, LineString, Polygon, Circle} from "ol/geom";
-import {Fill, Stroke, Style, Text} from "ol/style";
-import {fromCircle} from 'ol/geom/Polygon';
-
+import { getTopLeft, getWidth } from "ol/extent";
+import { fromLonLat, get as getProjection } from "ol/proj";
+import { Feature } from "ol";
+import { Point, LineString, Polygon, Circle } from "ol/geom";
+import { Fill, Stroke, Style, Text } from "ol/style";
+import { fromCircle } from 'ol/geom/Polygon';
 // 类型检查
 function type(obj) {
     var s = Object.prototype.toString.call(obj);
@@ -50,26 +49,24 @@ export default class OLMAP {
     setTargetId(id) {
         this.targetId = id;
     }
-
     getMap2d() {
         return this.map2d;
     }
-
     setDefaultZoomLevel(level) {
         this.setDefaultZoomLevel = level;
     }
-
     /**
      * 根据EPSG：4326坐标系 新建瓦片地图.....
      * @param {*} centerPosition 中心点的经纬度坐标
      * @notice 参数不能为空
      */
-    mapInit(centerPosition) {
+    mapInit( centerPosition) {
         // 如果传进来的 map2d的参数为null，说明需要新建一个map地图
         if (this.map2d == null) {
             // 地图注记 与 底图的相关配置
             var projection = getProjection("EPSG:4326");
             var projectionExtent = projection.getExtent();
+            // console.log("projection:",projection);
             var size = getWidth(projectionExtent) / 256;
             var resolutions = new Array(14);
             var matrixIds = new Array(14);
@@ -79,17 +76,25 @@ export default class OLMAP {
                 matrixIds[z] = z;
             }
             let layer = new TileLayer({
-                opacity: 1, source: new XYZ({
-                    url: 'http://127.0.0.1:8080/map/roadmap/{z}/{x}/{y}.png', wrapX: true, tileSize: [512, 512]
-                }), visible: true
-            });
-
+                opacity: 1,
+                source: new XYZ({
+                    url: 'http://127.0.0.1:8080/map/roadmap/{z}/{x}/{y}.png',
+                    wrapX: true,
+                    tileSize: [512,512],
+                }),
+                visible: true
+            })
             var map = new Map({
-                layers: [layer], target: this.targetId, view: new View({
-                    center: centerPosition, zoom: this.defaultZoomLevel, minZoom: 6, projection: projection
-                })
+                layers: [layer],
+                target: this.targetId,
+                view: new View({
+                    center: centerPosition,
+                    zoom: this.defaultZoomLevel,
+                    minZoom: 6,
+                    projection: projection
+                }),
             });
-
+            // console.log("map.getView().getResolution()",map.getView().getResolution());
             this.map2d = map;
         }
     }
@@ -120,7 +125,8 @@ export default class OLMAP {
                 matrixIds[z] = z;
             }
             let layer_Base = new TileLayer({
-                opacity: 1, source: new WMTS({
+                opacity: 1,
+                source: new WMTS({
                     url: 'http://t{0-7}.tianditu.gov.cn/' + layerArr[0] + '_c/wmts?tk=' + key,
                     layer: layerArr[0],
                     matrixSet: "c",
@@ -128,14 +134,17 @@ export default class OLMAP {
                     style: "default",
                     projection: projection,
                     tileGrid: new WMTSTileGrid({
-                        origin: getTopLeft(projectionExtent), resolutions: resolutions, matrixIds: matrixIds
+                        origin: getTopLeft(projectionExtent),
+                        resolutions: resolutions,
+                        matrixIds: matrixIds,
                     }),
-                    wrapX: true
-                }), visible: true
-            })
-
+                    wrapX: true,
+                }),
+                visible: true,
+            });
             let layer_Note = new TileLayer({
-                opacity: 1, source: new WMTS({
+                opacity: 1,
+                source: new WMTS({
                     url: 'http://t{0-7}.tianditu.gov.cn/' + layerArr[1] + '_c/wmts?tk=' + key,
                     layer: layerArr[1],
                     matrixSet: "c",
@@ -143,77 +152,91 @@ export default class OLMAP {
                     style: "default",
                     projection: projection,
                     tileGrid: new WMTSTileGrid({
-                        origin: getTopLeft(projectionExtent), resolutions: resolutions, matrixIds: matrixIds
+                        origin: getTopLeft(projectionExtent),
+                        resolutions: resolutions,
+                        matrixIds: matrixIds,
                     }),
-                    wrapX: true
-                }), visible: true
+                    wrapX: true,
+                }),
+                visible: true,
             });
-
-
             var map = new Map({
-                layers: [layer_Base, layer_Note], target: this.targetId, view: new View({
-                    center: centerPosition, zoom: this.defaultZoomLevel, minZoom: 4, projection: projection
-                })
-            })
-
-            this.map2d = map
-        }
-    }
-
-
-    tiandituInit2(curShowLayerIndex, centerPosition) {
-        console.log("地图坐标", curShowLayerIndex);
-        var projection = getProjection("EPSG:4326");
-        var projectionExtent = projection.getExtent();
-        var size = getWidth(projectionExtent) / 256;
-        var resolutions = new Array(14);
-        var matrixIds = new Array(14);
-        for (var z = 0; z < 14; ++z) {
-            // generate resolutions and matrixIds arrays for this WMTS
-            resolutions[z] = size / Math.pow(2, z);
-            matrixIds[z] = z;
-        }
-
-        // 开发者凭证密钥
-        let key = "d338c03dbed859950e662f8738fb3e75";
-        // 图层相关配置
-        // 暂时 数组长度为6  后续添加 配置 如果要添加新的图层 记得在judgeTileLayerType 添加新的键值对
-        let layersLength = 6;
-        let layersOption = new Array(layersLength);
-
-        for (let i = 0; i < layersLength; i++) {
-            // 参数 typeString 用于指定引用 source 源的 layer 类型
-            // visibleStatus 表示一开始渲染时，仅显示第一个相关的矢量底图与注记
-            let typeString = this.judgeTileLayerType(i);
-            console.log("i=", i, typeString);
-
-            let visibleStatus = (i == curShowLayerIndex[0] || i == curShowLayerIndex[1]);
-
-            console.log("visibleStatus", visibleStatus);
-
-            layersOption[i] = new TileLayer({
-                opacity: 1, source: new WMTS({
-                    url: 'http://t{0-7}.tianditu.gov.cn/' + typeString + '_c/wmts?tk=' + key,
-                    layer: typeString,
-                    matrixSet: "c",
-                    format: "tiles",
-                    style: "default",
-                    projection: projection,
-                    tileGrid: new WMTSTileGrid({
-                        origin: getTopLeft(projectionExtent), resolutions: resolutions, matrixIds: matrixIds
-                    }),
-                    wrapX: true
-                }), visible: visibleStatus
+                layers: [layer_Base, layer_Note],
+                target: this.targetId,
+                view: new View({
+                    center: centerPosition,
+                    zoom: this.defaultZoomLevel,
+                    minZoom: 4,
+                    projection: projection
+                }),
             });
+            this.map2d = map;
         }
-        console.log("curShowLayerIndex........", curShowLayerIndex);
-        var map = new Map({
-            layers: layersOption, target: this.targetId, view: new View({
-                center: centerPosition, zoom: this.defaultZoomLevel, minZoom: 4, projection: projection
-            }),
-        });
-        this.map2d = map;
     }
+
+
+  tiandituInit2(curShowLayerIndex,centerPosition) {
+      console.log("地图坐标",curShowLayerIndex);
+    var projection = getProjection("EPSG:4326");
+    var projectionExtent = projection.getExtent();
+    var size = getWidth(projectionExtent) / 256;
+    var resolutions = new Array(14);
+    var matrixIds = new Array(14);
+    for (var z = 0; z < 14; ++z) {
+      // generate resolutions and matrixIds arrays for this WMTS
+      resolutions[z] = size / Math.pow(2, z);
+      matrixIds[z] = z;
+    }
+
+    // 开发者凭证密钥
+    let key = "d338c03dbed859950e662f8738fb3e75";
+    // 图层相关配置
+    // 暂时 数组长度为6  后续添加 配置 如果要添加新的图层 记得在judgeTileLayerType 添加新的键值对
+    let layersLength = 6;
+    let layersOption = new Array(layersLength);
+
+      for (let i = 0; i < layersLength; i++) {
+      // 参数 typeString 用于指定 引用source源的layer类型  visibleStatus 表示一开始渲染我们只需要他的第一个相关的矢量底图与注记
+      let typeString = this.judgeTileLayerType(i);
+      console.log("i=",i,typeString);
+      let visibleStatus = (i == curShowLayerIndex[0] || i == curShowLayerIndex[1]) ? true : false;
+      console.log("visibleStatus",visibleStatus);
+      layersOption[i] = new TileLayer({
+        opacity: 1,
+        source: new WMTS({
+          url: 'http://t{0-7}.tianditu.gov.cn/' + typeString + '_c/wmts?tk=' + key,
+          layer: typeString,
+          matrixSet: "c",
+          format: "tiles",
+          style: "default",
+          projection: projection,
+          tileGrid: new WMTSTileGrid({
+            origin: getTopLeft(projectionExtent),
+            resolutions: resolutions,
+            matrixIds: matrixIds,
+          }),
+          wrapX: true,
+        }),
+        visible: visibleStatus,
+      });
+      // if (visibleStatus) {
+      //   curShowLayerIndex.push(i) ;
+      // }
+    }
+      console.log("curShowLayerIndex........",curShowLayerIndex);
+      var map = new Map({
+        layers: layersOption,
+        target: this.targetId,
+        view: new View({
+          center: centerPosition,
+          zoom: this.defaultZoomLevel,
+          minZoom: 4,
+          projection: projection
+        }),
+      });
+      this.map2d = map;
+  }
+
 
 
     // TileLayer 默认配置 只需要一个layertype ,key用于拼接天地图地址
@@ -224,11 +247,13 @@ export default class OLMAP {
         var resolutions = new Array(14);
         var matrixIds = new Array(14);
         for (var z = 0; z < 14; ++z) {
+            // generate resolutions and matrixIds arrays for this WMTS
             resolutions[z] = size / Math.pow(2, z);
-            matrixIds[z] = z
+            matrixIds[z] = z;
         }
         let defaultTileLayer = new TileLayer({
-            opacity: 1, source: new WMTS({
+            opacity: 1,
+            source: new WMTS({
                 url: 'http://t{0-7}.tianditu.gov.cn/' + layerType + '_w/wmts?tk=' + key,
                 layer: layerType,
                 matrixSet: "w",
@@ -236,21 +261,25 @@ export default class OLMAP {
                 style: "default",
                 projection: projection,
                 tileGrid: new WMTSTileGrid({
-                    origin: getTopLeft(projectionExtent), resolutions: resolutions, matrixIds: matrixIds
+                    origin: getTopLeft(projectionExtent),
+                    resolutions: resolutions,
+                    matrixIds: matrixIds,
                 }),
-                wrapX: true
-            }), visible: true
+                wrapX: true,
+            }),
+            visible: true,
         });
         return defaultTileLayer;
     }
 
     // 根据 约定的 类型的索引 判别 底图 与 注记图 需要渲染的layer类型
     JudgeBaseAndNoteByType(index) {
-        let map = [['vec', 'cva'],  // 矢量图
+        let map = [
+            ['vec', 'cva'],  // 矢量图
             ['ter', 'cta'],  //地形图
             ['img', 'cia']  //影像地图
         ]
-        return map[index]
+        return map[index];
     }
 
     /**
@@ -283,7 +312,7 @@ export default class OLMAP {
         type(coordinate) == 'array' ? positions = coordinate : [coordinate];
         for (let i in positions) {
             let feature = new Feature({
-                geometry: new Point(positions[i])
+                geometry: new Point(positions[i]),
             })
             // 如果callback 没有传入参数
             if (callback !== undefined) {
@@ -302,28 +331,28 @@ export default class OLMAP {
      */
     drawLine(pointArr) {
         let feature = new Feature({
-            geometry: new LineString(pointArr)
-        });
-
-        feature.setStyle(new Style({
-            stroke: new Stroke({
-                color: "#000", width: 1
-            }), fill: new Fill({
-                color: "#000"
+            geometry: new LineString(pointArr),
+            style: new Style({
+                stroke: new Stroke({
+                    color: "#000",
+                    width: 1,
+                }),
+                fill: new Fill({
+                    color: "#000",
+                    width: 1,
+                }),
             })
-        }));
-
+        });
         return feature;
     }
 
-
-// create new vector layer
+    // create new vector layer
     createVectorLayer() {
         let layer = new VectorLayer({})
         return layer;
     }
 
-// create new vector source
+    // create new vector source
     createVectorSource() {
         let source = new VectorSource({});
         return source;
@@ -334,11 +363,14 @@ export default class OLMAP {
      * @param {*} element dom节点
      * @returns
      */
-    createOverlay(element) {
+    createOverlay(element){
         var overlay = new Overlay({
-            element, autoPan: true, autoPanAnimation: {
-                duration: 250
-            }, stopEvent: false
+            element,
+            autoPan: true,
+            autoPanAnimation: {
+                duration: 250,
+            },
+            stopEvent: false,
         });
         return overlay;
     }
@@ -361,7 +393,7 @@ export default class OLMAP {
             let EPSGTransCoord = fromLonLat(centerPosition[i])
             let circle = new Circle(EPSGTransCoord, radius)
             let feature = new Feature({
-                geometry: fromCircle(circle).transform('EPSG:3857', 'EPSG:4326')
+                geometry: fromCircle(circle).transform('EPSG:3857','EPSG:4326'),
             })
             let coord = feature.getGeometry().getLinearRings()[0].getCoordinates()[0]
             coords = feature.getGeometry().getLinearRings()[0].getCoordinates();
@@ -370,20 +402,20 @@ export default class OLMAP {
             })
             featureText.setStyle(new Style({
                 text: new Text({
-                    font: '14px Microsoft YaHei', text: text, textAlign: "right", // 对齐方式
-                    textBaseline: "middle", // 文本基线
+                    font: '14px Microsoft YaHei',
+                    text: text,
+                    textAlign: "right", //对齐方式
+                    textBaseline: "middle", //文本基线
                     fill: new Fill({
                         color: color
-                    }), offsetX: -5
+                    }),
+                    offsetX: -5
                 })
             }))
-
             if (callback !== undefined && typeof callback === 'function') {
                 callback(feature, i, color, coords)
             }
-
             features.push(feature, featureText)
-
         }
         return {features, coords};
     }
@@ -399,8 +431,9 @@ export default class OLMAP {
     drawEllipseCircle(centerPosition, baseNum = 1, callback) {
         let features = []
         for (let i = 0; i < centerPosition.length; i++) {
+            // let circle = new Circle(centerPosition[i], radius)
             let feature = new Feature({
-                geometry: this.genEllipseGeom(400 * baseNum, 240 * baseNum, centerPosition[i])
+                geometry: this.genEllipseGeom(400 * baseNum, 240 * baseNum, centerPosition[i]),
             })
             if (type(callback) === 'function') {
                 callback(feature, i)
@@ -450,9 +483,12 @@ export default class OLMAP {
         const _this = this;
         this.map2d.map.on(eventName, function (ev) {
             let pixel = ev.pixel;
-            let feature = _this.map2d.map.forEachFeatureAtPixel(pixel, function (feature) {
-                return feature;
-            })
+            let feature = _this.map2d.map.forEachFeatureAtPixel(
+                pixel,
+                function (feature) {
+                    return feature;
+                }
+            )
             callback(pixel, feature)
         })
     }
@@ -481,21 +517,26 @@ export default class OLMAP {
     drawPolygon(coordArray) {
         let geo = new Polygon([coordArray])
         let feature = new Feature({
-            geometry: geo
+            geometry: geo,
         })
         return feature
     }
 
-    judgeTileLayerType(index) {
-        let ret;
-        let map = {
-            0: "vec", 1: "cva", 2: "ter", 3: "cta", 4: "img", 5: "cia"
-        };
-        for (let i in map) {
-            if (index === i) {
-                ret = map[i];
-            }
-        }
-        return ret;
+  judgeTileLayerType(index) {
+    let ret;
+    let map = {
+      0: "vec",
+      1: "cva",
+      2: "ter",
+      3: "cta",
+      4: "img",
+      5: "cia",
+    };
+    for (let i in map) {
+      if (index == i) {
+        ret = map[i];
+      }
     }
+    return ret;
+  }
 }
