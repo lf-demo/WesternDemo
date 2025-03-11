@@ -157,7 +157,7 @@ export default {
     initYearOptions() {
       this.yearOptions = []
       // 获取当年和前3年的年份
-      const year = new Date().getFullYear();
+      const year = 12;
       for (let i = year - 2; i <= year; i++) {
         this.yearOptions.push(i.toString());
       }
@@ -168,7 +168,6 @@ export default {
       },
 
       initMonthOptions() {
-        const currentYear = new Date().getFullYear();
         const selectedYear = parseInt(this.year);
 
         if (!selectedYear) {
@@ -176,7 +175,7 @@ export default {
           return;
         }
 
-        const maxMonth = selectedYear === currentYear ? new Date().getMonth() + 1 : 12;
+        const maxMonth =  12;
         this.monthOptions = this.generateOptions(maxMonth);
       },
 
@@ -201,214 +200,155 @@ export default {
         }
 
         // 直接使用 Array.from 生成日期数组
-        this.dayOptions = Array.from({ length: daysInMonth }, (_, i) => this.checkmore10(i + 1));
+        this.dayOptions = Array.from({length: daysInMonth}, (_, i) => this.checkmore10(i + 1));
       },
 
 
-    inithourOptions() {
-      this.hourOptions = []
-      const year = parseInt(this.year);
-      const month = parseInt(this.month);
-      const date = parseInt(this.day)
-      var hour = 23
-      if (year === new Date().getFullYear() && month === (new Date().getMonth() + 1) && date === new Date().getDate()) {
-        hour = new Date().getHours();
-      }
-      if (year && month && date) {
+      inithourOptions() {
+        this.hourOptions = []
+        const year = parseInt(this.year);
+        const month = parseInt(this.month);
+        const date = parseInt(this.day)
+        var hour = 23
+        if (year && month && date) {
 
-        for (let i = 0; i <= hour; i++) {
-          this.hourOptions.push(this.checkmore10(i));
+          for (let i = 0; i <= hour; i++) {
+            this.hourOptions.push(this.checkmore10(i));
+          }
+        }
+      },
+      initminOptions() {
+        this.minOptions = []
+        const year = parseInt(this.year)
+        const month = parseInt(this.month)
+        const date = parseInt(this.day)
+        const hour = parseInt(this.hour)
+        var minute = 59
+        minute = minute / 15
+
+        // 获取小时的取值范围
+        if (year && month && date && hour)
+          for (let i = 0; i <= minute; i++) {
+            this.minOptions.push(this.checkmore10(i * 15));
+          }
+      },
+      insertdata(f, i) {
+        var td = {}
+        td.id = i
+        td.fileName = f.filename
+        td.type = f.category
+        td.date = f.year + "-" + f.month + "-" + f.day + " " + f.hour + ":" + f.min
+        td.url = f.url
+        return td
+      },
+      getTableData() {
+        const {year, month, day, hour, minute, category, filedata} = this;
+
+        // 使用 filter() 进行条件筛选
+        this.tableData = filedata.filter(f => {
+          return (
+            (!year || f.year === year) &&
+            (!month || f.month === month) &&
+            (!day || f.day === day) &&
+            (!hour || f.hour === hour) &&
+            (!minute || f.min === minute) &&
+            (!category || f.category === category)
+          );
+        }).map((f, i) => this.insertdata(f, i));  // 直接调用 insertdata 进行数据转换
+
+        // 确保 tableData 为空时不会是 undefined 或 null
+        if (!this.tableData.length) {
+          this.tableData = [];
+        }
+      },
+      getfiledata() {
+        const i = 0
+        var file = null
+        var files = []
+        return files
+      },
+      handleSearch() {
+        this.getTableData()
+      },
+
+      handleCurrentChange(val) {
+        this.currentPage = val;
+      },
+      clickbtn(url, filename) {
+        console.log(url)
+        // window.location.href(url)
+        var isExists = 0;
+        try {
+          $.ajax({
+            url: url,
+            async: false,
+            type: 'HEAD',
+            timeout: 2000,
+            error: function () {
+              isExists = 0;
+            },
+            success: function () {
+              isExists = 1;
+            }
+
+          });
+        } catch {
+          isExists = 0;
+        }
+
+
+        if (isExists == 1) {
+
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.setAttribute('target', '_blank');
+          filename && a.setAttribute('download', filename);
+          a.href = url;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+
+        } else {
+
+          this.$message({
+            message: '文件暂不存在',
+            // type: 'warning'
+            type: 'error'
+          })
+
         }
       }
+
     },
-    initminOptions() {
-      this.minOptions = []
-      const year = parseInt(this.year)
-      const month = parseInt(this.month)
-      const date = parseInt(this.day)
-      const hour = parseInt(this.hour)
-      var minute = 59
-      if (year === new Date().getFullYear() && month === (new Date().getMonth() + 1) && date === new Date().getDate() && hour == new Date().getHours()) {
-        minute = new Date().getMinutes()
-        // console.log(minute)
+
+
+    watch: {
+      // 监听年份和月份的变化，重新计算日期的取值范围
+      year() {
+        this.initMonthOptions();
+        this.initDateOptions();
+        this.inithourOptions();
+        this.initminOptions();
+      },
+      month() {
+        if (!this.year)
+          this.month = ''
+        // this.dateOptions = [];
+        this.initDateOptions();
+        this.inithourOptions();
+        this.initminOptions();
+      },
+      day() {
+        if (!this.month)
+          this.day = ''
+        this.inithourOptions();
+        this.initminOptions();
+      },
+      hour() {
+        if (!this.day)
+          this.hour = ''
+        this.initminOptions();
       }
-      minute = minute / 15
-
-      // 获取小时的取值范围
-      if (year && month && date && hour)
-        for (let i = 0; i <= minute; i++) {
-          this.minOptions.push(this.checkmore10(i * 15));
-        }
-    },
-    insertdata(f, i) {
-      var td = {}
-      td.id = i
-      td.fileName = f.filename
-      td.type = f.category
-      td.date = f.year + "-" + f.month + "-" + f.day + " " + f.hour + ":" + f.min
-      td.url = f.url
-      return td
-    },
-    getTableData() {
-      const {year, month, day, hour, minute, category, filedata} = this;
-
-      // 使用 filter() 进行条件筛选
-      this.tableData = filedata.filter(f => {
-        return (
-          (!year || f.year === year) &&
-          (!month || f.month === month) &&
-          (!day || f.day === day) &&
-          (!hour || f.hour === hour) &&
-          (!minute || f.min === minute) &&
-          (!category || f.category === category)
-        );
-      }).map((f, i) => this.insertdata(f, i));  // 直接调用 insertdata 进行数据转换
-
-      // 确保 tableData 为空时不会是 undefined 或 null
-      if (!this.tableData.length) {
-        this.tableData = [];
-      }
-    },
-
-    getfiledata() {
-      const i = 0
-      var file = null
-      var files = []
-      // this.filedata=[]
-      // if(!this.type && !this.year && !this.month && !this.day && !this.hour && !this.minute){
-      this.typeOptions.forEach((type) => {
-        this.yearOptions.forEach((year) => {
-          var monthInYear = 12
-          if (year === new Date().getFullYear()) {
-            monthInYear = new Date().getMonth() + 1
-          }
-          for (var month = 1; month <= monthInYear; month++) {
-            var daysInMonth = new Date(year, month, 0).getDate();
-            if (year === new Date().getFullYear() && month === (new Date().getMonth() + 1)) {
-              daysInMonth = new Date().getDate()
-            }
-            for (var day = 1; day <= daysInMonth; day++) {
-              var hourInDay = 23
-              if (year === new Date().getFullYear() && month === (new Date().getMonth() + 1) && day === new Date().getDate()) {
-                hourInDay = new Date().getHours();
-              }
-              for (var hour = 0; hour <= hourInDay; hour++) {
-                var minuteInHour = 59
-                if (year === new Date().getFullYear() && month === (new Date().getMonth() + 1) && day === new Date().getDate() && hour == new Date().getHours()) {
-                  minuteInHour = new Date().getMinutes()
-                }
-                minuteInHour = minuteInHour / 15
-                for (var min = 0; min <= minuteInHour; min++) {
-                  var _year = this.checkmore10(year)
-                  var _month = this.checkmore10(month)
-                  var _day = this.checkmore10(day)
-                  var _hour = this.checkmore10(hour)
-                  var _min = this.checkmore10(min * 15)
-                  file = {
-                    year: _year,
-                    month: _month,
-                    day: _day,
-                    hour: _hour,
-                    min: _min,
-                    filename: _year + _month + _day + _hour + _min + ".nc",
-                    category: type,
-                    url: `/maps/img/Agricultural_station/` + type + "/" + year + "/" + _month + "/" + _day + "/" + _year + _month + _day + _hour + _min + ".nc"
-                  }
-                  // console.log(_day)
-                  files.push(file)
-                }
-                // console.log(minute)
-              }
-            }
-          }
-
-        })
-      })
-      // console.log(files.length)
-      // localStorage.setItem('files', JSON.stringify(files));//额度太大 存不了
-      return files
-    },
-    handleSearch() {
-      this.getTableData()
-    },
-
-    handleCurrentChange(val) {
-      this.currentPage = val;
-    },
-    clickbtn(url, filename) {
-      console.log(url)
-      // window.location.href(url)
-      var isExists = 0;
-      try {
-        $.ajax({
-          url: url,
-          async: false,
-          type: 'HEAD',
-          timeout: 2000,
-          error: function () {
-            isExists = 0;
-          },
-          success: function () {
-            isExists = 1;
-          }
-
-        });
-      } catch {
-        isExists = 0;
-      }
-
-
-      if (isExists == 1) {
-
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.setAttribute('target', '_blank');
-        filename && a.setAttribute('download', filename);
-        a.href = url;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-      } else {
-
-        this.$message({
-          message: '文件暂不存在',
-          // type: 'warning'
-          type: 'error'
-        })
-
-      }
-    }
-
-  },
-
-
-  watch: {
-    // 监听年份和月份的变化，重新计算日期的取值范围
-    year() {
-      this.initMonthOptions();
-      this.initDateOptions();
-      this.inithourOptions();
-      this.initminOptions();
-    },
-    month() {
-      if (!this.year)
-        this.month = ''
-      // this.dateOptions = [];
-      this.initDateOptions();
-      this.inithourOptions();
-      this.initminOptions();
-    },
-    day() {
-      if (!this.month)
-        this.day = ''
-      this.inithourOptions();
-      this.initminOptions();
-    },
-    hour() {
-      if (!this.day)
-        this.hour = ''
-      this.initminOptions();
     }
   }
 }
