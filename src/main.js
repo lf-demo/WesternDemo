@@ -1,49 +1,36 @@
-const Vue = require('vue');
-const App = require('./App.vue');
-const router = require('./router');
-const store = require('./store');
-// 引入icon
-require('./assets/icon/iconfont.css');
+import Vue from 'vue';
+import App from './App.vue';
+
+// 核心配置
 Vue.config.productionTip = false;
 
-const Element = require('element-ui');
-require("element-ui/lib/theme-chalk/index.css");
+// 第三方库引入
+import Element from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(Element);
 
-const axios = require('axios');
-require("./axios.js");
-//引用全局
+import axios from 'axios';
+import './axios.js';
 Vue.prototype.$axios = axios;
-Vue.config.productionTip = false;
 
-const echarts = require('echarts');
+import * as echarts from 'echarts';
 Vue.prototype.$echarts = echarts;
 
-// 过滤器
-const custom = require('./utils/util');
-const ol = require('ol');
-require('ol/ol.css');
-require("./mapOperation.js");
-// import Tiff from 'tiff.js'
-const Popup = require('ol-popup');
-// import on your project (less then 1KB gziped)
-// import vueSmoothScroll from 'vue2-smooth-scroll'
-// Vue.use(vueSmoothScroll)
-const shp = require('shapefile');
-const togeojson = require('togeojson');
-const smooth = require('chaikin-smooth');
-const moment = require('moment');
+// 自定义模块引入
+import router from './router';
+import store from './store';
+import './mapOperation.js';
 
-//引入Antd
-// import "ant-design-vue/dist/antd.less";
+// 样式引入
+import './assets/icon/iconfont.css';
+// 创建事件总线
+const bus = new Vue();
 
 new Vue({
   router,
   store,
   data: {
-    // 空的实例放到根组件下，所有的子组件都能调用
-    Bus: new Vue()
+    Bus: bus
   },
   render: h => h(App)
-
 }).$mount('#app');
