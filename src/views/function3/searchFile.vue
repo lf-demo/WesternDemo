@@ -66,9 +66,8 @@
           <!-- <el-table-column  label="文件描述"  /> -->
           <el-table-column prop="url" label="下载">
             <template slot-scope="scope">
-              <el-button type="success" v-on:click="clickbtn(scope.row.url,scope.row.filename)">下载 <i
+              <el-button type="success">下载 <i
                 class="el-icon-download"></i></el-button>
-              <!-- <el-button type="danger">删除 <i class="el-icon-remove-outline"></i></el-button> -->
             </template>
           </el-table-column>
         </el-table>
@@ -77,7 +76,6 @@
             :current-page.sync="currentPage"
             :page-size="pageSize"
             :total="tableData.length"
-            @current-change="handleCurrentChange"
             layout="total, sizes, prev, pager, next, jumper"
             style="margin:0 auto"
           ></el-pagination>
@@ -89,8 +87,6 @@
 
 
 <script>
-import $ from 'jquery'
-
 export default {
   name: 'searchFile.vue',
 
@@ -175,7 +171,7 @@ export default {
           return;
         }
 
-        const maxMonth =  12;
+        const maxMonth = 12;
         this.monthOptions = this.generateOptions(maxMonth);
       },
 
@@ -266,61 +262,8 @@ export default {
         var file = null
         var files = []
         return files
-      },
-      handleSearch() {
-        this.getTableData()
-      },
-
-      handleCurrentChange(val) {
-        this.currentPage = val;
-      },
-      clickbtn(url, filename) {
-        console.log(url)
-        // window.location.href(url)
-        var isExists = 0;
-        try {
-          $.ajax({
-            url: url,
-            async: false,
-            type: 'HEAD',
-            timeout: 2000,
-            error: function () {
-              isExists = 0;
-            },
-            success: function () {
-              isExists = 1;
-            }
-
-          });
-        } catch {
-          isExists = 0;
-        }
-
-
-        if (isExists == 1) {
-
-          const a = document.createElement('a');
-          a.style.display = 'none';
-          a.setAttribute('target', '_blank');
-          filename && a.setAttribute('download', filename);
-          a.href = url;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-
-        } else {
-
-          this.$message({
-            message: '文件暂不存在',
-            // type: 'warning'
-            type: 'error'
-          })
-
-        }
       }
-
     },
-
 
     watch: {
       // 监听年份和月份的变化，重新计算日期的取值范围

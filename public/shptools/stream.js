@@ -169,26 +169,8 @@ var win = self, doc = win.document, fromCharCode = String.fromCharCode, push = A
      * 解析 IEEE 754 浮点数
      */
     _parseFloatingPoint: function (sign, expo, mantis, numEBits, numSBits) {
-      if (sign === 0 && expo === 0 && mantis === 0) {
-        return 0.0; // 直接返回 0
-      }
-
       const maxExpo = Math.pow(2, numEBits);
-      const bias = ~~((maxExpo - 1) / 2);
-      const scale = Math.pow(2, numSBits);
-      const fract = mantis / scale;
-      let val;
-
-      if (bias) {
-        if (bias < maxExpo) {
-          val = Math.pow(2, expo - bias) * (1 + fract);
-        } else {
-          val = fract ? NaN : Infinity;
-        }
-      } else {
-        val = fract ? Math.pow(2, 1 - bias) * fract : 0;
-      }
-
+      const val = Math.pow(2, expo - maxExpo) * (1 + mantis / Math.pow(2, numSBits));
       return sign ? -val : val;
     },
 
