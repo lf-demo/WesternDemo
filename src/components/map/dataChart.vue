@@ -15,7 +15,7 @@
         </div>
         <div id="myChart" class="myChart" ></div>
     </div>
-    
+
   </div>
 </template>
 
@@ -35,8 +35,8 @@
           datetime:[],/* 日期/时间 */
           rh:[50,60,50,40,43 ,42,33],/* 相对湿度 */
         },
-        option: {  
-          
+        option: {
+
         },
     }
   },
@@ -44,8 +44,8 @@
     init(){
         this.data.datetime = []
         for (var i=0;i<7;i++){
-          // var day = today + timedelta(-(7-i-1)) 
-          var btd = moment().subtract((6-i), 'days').format('YYYY-MM-DD')    
+          // var day = today + timedelta(-(7-i-1))
+          var btd = moment().subtract((6-i), 'days').format('YYYY-MM-DD')
           // this.option.xAxis.data.push(btd)
           this.data.datetime.push(btd)
         //   this.data.datetime.push(btd)
@@ -53,7 +53,7 @@
         // console.log(this.option.xAxis.data.length)
         // console.log(this.option.xAxis.data)
         var myChart = echarts.init(document.getElementById('myChart'))
-        
+
         myChart.setOption(this.setChartsOption(this.data))
         this.spinnVisible=false
     },
@@ -231,7 +231,6 @@
                 // data:this.legend.data,
                 type: 'line',
                 smooth: true,
-                symbolSize: 10,
                  itemStyle: {
                   normal: {
                     // color: "#03F9C6",
@@ -275,16 +274,14 @@
 </script>
 
 <style  lang="less" scoped>
-@import "~@/styles/variables.less";
 .weather-wrapper {
-  
+
   position: relative;
   display: flex;
   .title-menu {
     width: 950px;
     min-width: 650px;
     font-size: 14px;
-    color: "#000";
     margin-left: 7px;
     .shijian {
       margin-bottom: 190px;
@@ -302,7 +299,7 @@
     height: 600px;
     top:5px;
   }
-  
+
 
 }
 </style>
