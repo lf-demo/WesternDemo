@@ -192,33 +192,12 @@
 
       do {
         record = {}
-
-        // Record number (1-based)
         record.id = s.readSI32(true)
-
         if (record.id === 0) break //no more records
-
-        // Record length (in 16-bit words)
         record.length = s.readSI32(true) * 2
-
-// 1. 预定义安全映射
-        const SHAPE_READERS = {
-          ShapePoint: "_readShapePoint",
-          ShapeLine: "_readShapeLine",
-          ShapePolygon: "_readShapePolygon",
-          // 添加其他允许的方法
-        };
-
         record.shapeType = SHAPE_TYPES[s.readSI32()];
 
 // 2. 检查 shapeType 是否在安全映射内
-        const methodName = SHAPE_READERS[record.shapeType];
-        if (methodName && typeof this[methodName] === "function") {
-          this[methodName](record);
-        } else {
-          console.error("Invalid shapeType:", record.shapeType);
-        }
-
         records.push(record);
 
       } while (true);

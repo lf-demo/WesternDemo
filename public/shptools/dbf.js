@@ -228,7 +228,7 @@
         record = {}
 
         // Data records begin with a delete flag byte. If this byte is an ASCII space (0x20), the record is not deleted. If the first byte is an asterisk (0x2A), the record is deleted
-        record._isDeleted = s.readSI8() == 42
+        record._isDeleted = s.readSI8() === 42
 
         for(var i = 0; i < numFields; i++){
           field = fields[i]

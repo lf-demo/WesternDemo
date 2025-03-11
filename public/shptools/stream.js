@@ -450,7 +450,7 @@ var win = self, doc = win.document, fromCharCode = String.fromCharCode, push = A
                 buff.push(buff[i++]);
               }
             }
-          } while (256 != sym);
+          } while (256 !== sym);
         } else {
           t.align();
           var len = t.readUI16(), nlen = t.readUI16();
