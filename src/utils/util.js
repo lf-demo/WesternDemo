@@ -56,13 +56,10 @@ function escapeRegExp(string) {
 }
 
 function getCookie(name) {
-  // Safely escape the user-provided cookie name
-  const escapedName = encodeURIComponent(name);
-  // Create a regular expression for matching the cookie name
-  const reg = new RegExp('(^|;)\\s*' + escapedName + '=([^;]*)');
-  let match = document.cookie.match(reg);
-  return match ? decodeURIComponent(match[2]) : ''; // If found, return the cookie value
-};
+  const escapedName = encodeURIComponent(name) + "=";
+  const cookies = document.cookie.split("; ").find(cookie => cookie.startsWith(escapedName));
+  return cookies ? decodeURIComponent(cookies.split("=")[1]) : "";
+}
 
 
 /**

@@ -101,7 +101,7 @@
       xhr.overrideMimeType("text/plain; charset=x-user-defined")
       xhr.send()
 
-      if(200 != xhr.status)
+      if(200 !== xhr.status)
         throw "Unable to load " + url + " status: " + xhr.status
 
       this.stream = new Gordon.Stream(xhr.responseText)
@@ -169,7 +169,7 @@
         fields = [],
         field
 
-      while (s.readSI8() != 0x0D) {
+      while (s.readSI8() !== 0x0D) {
         s.offset--
         field = {}
 

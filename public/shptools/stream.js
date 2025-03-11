@@ -373,7 +373,7 @@ var win = self, doc = win.document, fromCharCode = String.fromCharCode, push = A
       do {
         var isFinal = t.readUB(1, true), type = t.readUB(2, true);
         if (type) {
-          if (1 == type) {
+          if (1 === type) {
             var distTable = uz.fixedDistTable, litTable = uz.fixedLitTable;
             if (!distTable) {
               var bitLengths = [];
