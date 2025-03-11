@@ -149,17 +149,6 @@ export default {
       files = this.getfiledata()
     }
     this.filedata = files
-    // console.log(this.filedata)
-    // console.log(this.minOptions)
-
-    // // 获取表格数据
-    // axios.get('http://localhost:3000/api/satellite_data_download')
-    //     .then(res => {
-    //         this.tableData = res.data;
-    //     })
-    //     .catch(err => {
-    //         console.log(err);
-    //     })
   },
   methods: {
     checkmore10(i) {
@@ -173,49 +162,56 @@ export default {
         this.yearOptions.push(i.toString());
       }
     },
-    initMonthOptions() {
-      this.monthOptions = []
-      // 获取月份的取值范围
-      var month = 12
-      const year = parseInt(this.year);
-      if (year == new Date().getFullYear()) {
-        month = new Date().getMonth() + 1
+    methods: {
+      generateOptions(count) {
+        return Array.from({length: count}, (_, i) => this.checkmore10(i + 1));
+      },
+
+      initMonthOptions() {
+        const currentYear = new Date().getFullYear();
+        const selectedYear = parseInt(this.year);
+
+        if (!selectedYear) {
+          this.monthOptions = [];
+          return;
+        }
+
+        const maxMonth = selectedYear === currentYear ? new Date().getMonth() + 1 : 12;
+        this.monthOptions = this.generateOptions(maxMonth);
+      },
+
+      initDateOptions() {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1;
+        const selectedYear = parseInt(this.year);
+        const selectedMonth = parseInt(this.month);
+
+        if (!selectedYear || !selectedMonth) {
+          this.dayOptions = [];
+          return;
+        }
+
+        let daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+
+        if (selectedYear === currentYear && selectedMonth === currentMonth) {
+          daysInMonth = currentDate.getDate();
+        }
+
+        this.dayOptions = this.generateOptions(daysInMonth);
       }
-      // console.log("month:",month)
-      // console.log("selyear:",this.selyear)
-      // console.log("mogetFullYearnth:",new Date().getFullYear())
-      if (year)
-        for (let i = 1; i <= month; i++) {
-          this.monthOptions.push(this.checkmore10(i));
-        }
     },
-    initDateOptions() {
-      this.dayOptions = []
-      // 获取日期的取值范围
-      const year = parseInt(this.year);
-      const month = parseInt(this.month);
-      if (year && month) {
-        var daysInMonth = new Date(year, month, 0).getDate();
-        if (year == new Date().getFullYear() && month == (new Date().getMonth() + 1)) {
-          daysInMonth = new Date().getDate()
-        }
-        for (let i = 1; i <= daysInMonth; i++) {
-          this.dateOptions.push(this.checkmore10(i));
-        }
-      }
-    },
+
     inithourOptions() {
       this.hourOptions = []
       const year = parseInt(this.year);
       const month = parseInt(this.month);
       const date = parseInt(this.day)
       var hour = 23
-      if (year == new Date().getFullYear() && month == (new Date().getMonth() + 1) && date == new Date().getDate()) {
+      if (year === new Date().getFullYear() && month === (new Date().getMonth() + 1) && date === new Date().getDate()) {
         hour = new Date().getHours();
       }
       if (year && month && date) {
-        // 获取小时的取值范围
-        // console.log("hour",hour)
 
         for (let i = 0; i <= hour; i++) {
           this.hourOptions.push(this.checkmore10(i));
@@ -229,7 +225,7 @@ export default {
       const date = parseInt(this.day)
       const hour = parseInt(this.hour)
       var minute = 59
-      if (year == new Date().getFullYear() && month == (new Date().getMonth() + 1) && date == new Date().getDate() && hour == new Date().getHours()) {
+      if (year === new Date().getFullYear() && month === (new Date().getMonth() + 1) && date === new Date().getDate() && hour == new Date().getHours()) {
         minute = new Date().getMinutes()
         // console.log(minute)
       }
@@ -256,12 +252,12 @@ export default {
       // 使用 filter() 进行条件筛选
       this.tableData = filedata.filter(f => {
         return (
-          (!year || f.year == year) &&
-          (!month || f.month == month) &&
-          (!day || f.day == day) &&
-          (!hour || f.hour == hour) &&
-          (!minute || f.min == minute) &&
-          (!category || f.category == category)
+          (!year || f.year === year) &&
+          (!month || f.month === month) &&
+          (!day || f.day === day) &&
+          (!hour || f.hour === hour) &&
+          (!minute || f.min === minute) &&
+          (!category || f.category === category)
         );
       }).map((f, i) => this.insertdata(f, i));  // 直接调用 insertdata 进行数据转换
 
@@ -280,22 +276,22 @@ export default {
       this.typeOptions.forEach((type) => {
         this.yearOptions.forEach((year) => {
           var monthInYear = 12
-          if (year == new Date().getFullYear()) {
+          if (year === new Date().getFullYear()) {
             monthInYear = new Date().getMonth() + 1
           }
           for (var month = 1; month <= monthInYear; month++) {
             var daysInMonth = new Date(year, month, 0).getDate();
-            if (year == new Date().getFullYear() && month == (new Date().getMonth() + 1)) {
+            if (year === new Date().getFullYear() && month === (new Date().getMonth() + 1)) {
               daysInMonth = new Date().getDate()
             }
             for (var day = 1; day <= daysInMonth; day++) {
               var hourInDay = 23
-              if (year == new Date().getFullYear() && month == (new Date().getMonth() + 1) && day == new Date().getDate()) {
+              if (year === new Date().getFullYear() && month === (new Date().getMonth() + 1) && day === new Date().getDate()) {
                 hourInDay = new Date().getHours();
               }
               for (var hour = 0; hour <= hourInDay; hour++) {
                 var minuteInHour = 59
-                if (year == new Date().getFullYear() && month == (new Date().getMonth() + 1) && day == new Date().getDate() && hour == new Date().getHours()) {
+                if (year === new Date().getFullYear() && month === (new Date().getMonth() + 1) && day === new Date().getDate() && hour == new Date().getHours()) {
                   minuteInHour = new Date().getMinutes()
                 }
                 minuteInHour = minuteInHour / 15
@@ -364,12 +360,6 @@ export default {
         const a = document.createElement('a');
         a.style.display = 'none';
         a.setAttribute('target', '_blank');
-        /*
-        * download的属性是HTML5新增的属性
-        * href属性的地址必须是非跨域的地址，如果引用的是第三方的网站或者说是前后端分离的项目(调用后台的接口)，这时download就会不起作用。
-        * 此时，如果是下载浏览器无法解析的文件，例如.exe,.xlsx..那么浏览器会自动下载，但是如果使用浏览器可以解析的文件，比如.txt,.png,.pdf....浏览器就会采取预览模式
-        * 所以，对于.txt,.png,.pdf等的预览功能我们就可以直接不设置download属性(前提是后端响应头的Content-Type: application/octet-stream，如果为application/pdf浏览器则会判断文件为 pdf ，自动执行预览的策略)
-        */
         filename && a.setAttribute('download', filename);
         a.href = url;
         document.body.appendChild(a);
@@ -393,9 +383,6 @@ export default {
   watch: {
     // 监听年份和月份的变化，重新计算日期的取值范围
     year() {
-      // this.monthOptions = [];
-      // this.initMonthOptions();
-      // this.dateOptions = [];
       this.initMonthOptions();
       this.initDateOptions();
       this.inithourOptions();

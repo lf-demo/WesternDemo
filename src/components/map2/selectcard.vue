@@ -71,9 +71,10 @@ import { Text } from 'ol/style';
           <li id="SST3" v-on:click="addTyphoonLayer">台风识别</li>
         </ul>
       </div>
-      <h3 style="padding-left:5px;margin-bottom:5px;width:85px;user-select:none; border:1px solid white;border-radius:5px"
-          v-on:click="clickType">二级产品<i class="el-icon-arrow-down"
-                                        style="float:right;margin-top:3px;margin-right:10px"></i></h3>
+      <h3
+        style="padding-left:5px;margin-bottom:5px;width:85px;user-select:none; border:1px solid white;border-radius:5px"
+        v-on:click="clickType">二级产品<i class="el-icon-arrow-down"
+                                      style="float:right;margin-top:3px;margin-right:10px"></i></h3>
       <div id="product">
         <div id="tips">
           将二级产品展示到地图上，点击下列标识即可显示
@@ -314,48 +315,30 @@ export default {
 
     },
     clickbtn() {
-      switch (this.type) {
-        case 1:
-          this.addIMAGERLorticityLayer();
-          break;
-        case 2:
-          this.addIMAGERWindShearLayer();
-          break;
-        case 3:
-          this.addIMAGERWindShearTrendLayer();
-          break;
-        case 4:
-          this.addIMAGERPrecipitationEstimationLayer();
-          break;
-        case 5:
-          this.addSOUNDERLayeredHumidity100mbLayer();
-          break;
-        case 6:
-          this.addSOUNDERLayeredHumidity200mbLayer();
-          break;
-        case 7:
-          this.addSOUNDERaridityIndexLayer();
-          break;
-        case 8:
-          this.addSOUNDEPotentialHeight100mbLayer();
-          break;
-        case 9:
-          this.addSOUNDEPotentialHeight200mbLayer();
-          break;
-        case 10:
-          this.addSnowDetectionLayer();
-          break;
-        case 11:
-          this.addSnowDeepLayer();
-          break;
-        case 12:
-          this.addTyphoonLayer();
-          break;
-        case 13:
-          this.addSnowDeep500mLayer();
-          break;
+      // 定义映射表
+      const layerActions = {
+        1: this.addIMAGERLorticityLayer,
+        2: this.addIMAGERWindShearLayer,
+        3: this.addIMAGERWindShearTrendLayer,
+        4: this.addIMAGERPrecipitationEstimationLayer,
+        5: this.addSOUNDERLayeredHumidity100mbLayer,
+        6: this.addSOUNDERLayeredHumidity200mbLayer,
+        7: this.addSOUNDERaridityIndexLayer,
+        8: this.addSOUNDEPotentialHeight100mbLayer,
+        9: this.addSOUNDEPotentialHeight200mbLayer,
+        10: this.addSnowDetectionLayer,
+        11: this.addSnowDeepLayer,
+        12: this.addTyphoonLayer,
+        13: this.addSnowDeep500mLayer,
+      };
+
+      // 查找并执行对应的方法
+      const action = layerActions[this.type];
+      if (action) {
+        action.call(this);
       }
     },
+
     clickType() {
       // var _this = this
       // console.log(_this)

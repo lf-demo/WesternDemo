@@ -85,7 +85,7 @@
       xhr.overrideMimeType("text/plain; charset=x-user-defined")
       xhr.send()
 
-      if(200 != xhr.status)
+      if(200 !== xhr.status)
         throw "Unable to load " + o.shp + " status: " + xhr.status
 
       this.url = o.shp
@@ -199,7 +199,7 @@
         // Record number (1-based)
         record.id = s.readSI32(true)
 
-        if(record.id == 0) break //no more records
+        if(record.id === 0) break //no more records
 
         // Record length (in 16-bit words)
         record.length = s.readSI32(true) * 2
