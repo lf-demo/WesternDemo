@@ -148,122 +148,48 @@ export default {
   },
   methods: {
     checkmore10(i) {
-      return i < 10 ? "0" + i : i.toString()
+      return i < 10 ? `0${i}` : i.toString();
     },
+
+    generateOptions(count, step = 1) {
+      return Array.from({length: count}, (_, i) => this.checkmore10(i * step));
+    },
+
     initYearOptions() {
-      this.yearOptions = []
-      // 获取当年和前3年的年份
       const year = 12;
-      for (let i = year - 2; i <= year; i++) {
-        this.yearOptions.push(i.toString());
-      }
+      this.yearOptions = Array.from({length: 3}, (_, i) => (year - 2 + i).toString());
     },
-    methods: {
-      generateOptions(count) {
-        return Array.from({length: count}, (_, i) => this.checkmore10(i + 1));
-      },
 
-      initMonthOptions() {
-        const selectedYear = parseInt(this.year);
-
-        if (!selectedYear) {
-          this.monthOptions = [];
-          return;
-        }
-
-        const maxMonth = 12;
-        this.monthOptions = this.generateOptions(maxMonth);
-      },
-
-      initDateOptions() {
-        const currentDate = new Date();
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = currentDate.getMonth() + 1;
-        const selectedYear = Number(this.year);
-        const selectedMonth = Number(this.month);
-
-        if (!selectedYear || !selectedMonth) {
-          this.dayOptions = [];
-          return;
-        }
-
-        // 计算选中月份的天数
-        let daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
-
-        // 如果是当年当月，限制到今天
-        if (selectedYear === currentYear && selectedMonth === currentMonth) {
-          daysInMonth = currentDate.getDate();
-        }
-
-        // 直接使用 Array.from 生成日期数组
-        this.dayOptions = Array.from({length: daysInMonth}, (_, i) => this.checkmore10(i + 1));
-      },
-
-
-      inithourOptions() {
-        this.hourOptions = []
-        const year = parseInt(this.year);
-        const month = parseInt(this.month);
-        const date = parseInt(this.day)
-        var hour = 23
-        if (year && month && date) {
-
-          for (let i = 0; i <= hour; i++) {
-            this.hourOptions.push(this.checkmore10(i));
-          }
-        }
-      },
-      initminOptions() {
-        this.minOptions = []
-        const year = parseInt(this.year)
-        const month = parseInt(this.month)
-        const date = parseInt(this.day)
-        const hour = parseInt(this.hour)
-        var minute = 59
-        minute = minute / 15
-
-        // 获取小时的取值范围
-        if (year && month && date && hour)
-          for (let i = 0; i <= minute; i++) {
-            this.minOptions.push(this.checkmore10(i * 15));
-          }
-      },
-      insertdata(f, i) {
-        var td = {}
-        td.id = i
-        td.fileName = f.filename
-        td.type = f.category
-        td.date = f.year + "-" + f.month + "-" + f.day + " " + f.hour + ":" + f.min
-        td.url = f.url
-        return td
-      },
-      getTableData() {
-        const {year, month, day, hour, minute, category, filedata} = this;
-
-        // 使用 filter() 进行条件筛选
-        this.tableData = filedata.filter(f => {
-          return (
-            (!year || f.year === year) &&
-            (!month || f.month === month) &&
-            (!day || f.day === day) &&
-            (!hour || f.hour === hour) &&
-            (!minute || f.min === minute) &&
-            (!category || f.category === category)
-          );
-        }).map((f, i) => this.insertdata(f, i));  // 直接调用 insertdata 进行数据转换
-
-        // 确保 tableData 为空时不会是 undefined 或 null
-        if (!this.tableData.length) {
-          this.tableData = [];
-        }
-      },
-      getfiledata() {
-        const i = 0
-        var file = null
-        var files = []
-        return files
-      }
+    initMonthOptions() {
+      this.monthOptions = this.year ? this.generateOptions(12, 1) : [];
     },
+
+    initDateOptions() {
+      if (!this.year || !this.month) {
+        this.dayOptions = [];
+        return;
+      }
+
+      const currentDate = new Date();
+      const selectedYear = Number(this.year);
+      const selectedMonth = Number(this.month);
+      const isCurrentMonth = selectedYear === currentDate.getFullYear() && selectedMonth === currentDate.getMonth() + 1;
+
+      const daysInMonth = isCurrentMonth ? currentDate.getDate() : new Date(selectedYear, selectedMonth, 0).getDate();
+      this.dayOptions = this.generateOptions(daysInMonth);
+    },
+
+    inithourOptions() {
+      this.hourOptions = this.year && this.month && this.day ? this.generateOptions(24) : [];
+    },
+
+    initminOptions() {
+      this.minOptions = this.year && this.month && this.day && this.hour ? this.generateOptions(4, 15) : [];
+    },
+    getfiledata() {
+      return [];
+    },
+
 
     watch: {
       // 监听年份和月份的变化，重新计算日期的取值范围

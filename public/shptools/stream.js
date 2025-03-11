@@ -48,21 +48,30 @@ var win = self, doc = win.document, fromCharCode = String.fromCharCode, push = A
     },
 
     readNumber: function (numBytes, bigEnd) {
-      var t = this, val = 0;
+      let val = 0;
+
       if (bigEnd) {
-        while (numBytes--) {
-          val = (val << 8) | t.readByteAt(t.offset++);
+        while (numBytes > 0) {
+          val = (val << 8) | this.readByteAt(this.offset);
+          this.offset++;  // 避免在表达式中自增
+          numBytes--;  // 变量递减从表达式中拆分出来
         }
       } else {
-        var o = t.offset, i = o + numBytes;
-        while (i > o) {
-          val = (val << 8) | t.readByteAt(--i);
+        let start = this.offset;
+        let end = start + numBytes;
+
+        while (end > start) {
+          end--;  // 变量递减从表达式中拆分出来
+          val = (val << 8) | this.readByteAt(end);
         }
-        t.offset += numBytes;
+
+        this.offset += numBytes;
       }
-      t.align();
+
+      this.align();
       return val;
     },
+
 
     readSNumber: function (numBytes, bigEnd) {
       var val = this.readNumber(numBytes, bigEnd), numBits = numBytes * 8;
@@ -203,20 +212,23 @@ var win = self, doc = win.document, fromCharCode = String.fromCharCode, push = A
     },
 
     readUB: function (numBits, lsb) {
-      var t = this, val = 0;
-      for (var i = 0; i < numBits; i++) {
-        if (8 === t._bitOffset) {
-          t._bitBuffer = t.readUI8();
-          t._bitOffset = 0;
+      let val = 0;
+
+      for (let i = 0; i < numBits; i++) {
+        if (this._bitOffset === 8) {
+          this._bitBuffer = this.readUI8();
+          this._bitOffset = 0;
         }
-        if (lsb) {
-          val |= (t._bitBuffer & (0x01 << t._bitOffset++) ? 1 : 0) << i;
-        } else {
-          val = (val << 1) | (t._bitBuffer & (0x80 >> t._bitOffset++) ? 1 : 0);
-        }
+
+        let bit = (this._bitBuffer >> this._bitOffset) & 1;
+        this._bitOffset++;  // 将自增操作从表达式中拆出来
+
+        val = lsb ? (val | (bit << i)) : ((val << 1) | bit);
       }
+
       return val;
     },
+
 
     readFB: function (numBits) {
       return this._readFixedPoint(numBits, 16);

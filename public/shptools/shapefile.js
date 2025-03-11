@@ -217,21 +217,23 @@
     },
     _readParts: function (record) {
       var s = this.stream,
-        nparts,
-        parts = []
+        parts = [];
 
-      nparts = record.numParts = s.readSI32()
+      var nparts = s.readSI32();
+      record.numParts = nparts;
 
-      // since number of points always proceeds number of parts, capture it now
-      record.numPoints = s.readSI32()
+      // 由于 numPoints 总是在 numParts 之后，所以可以先读取
+      record.numPoints = s.readSI32();
 
-      // parts array indicates at which index the next part starts at
-      while (nparts--) parts.push(s.readSI32())
+      // parts 数组存储每个部分开始的索引
+      for (let i = 0; i < nparts; i++) {
+        parts.push(s.readSI32());
+      }
 
-      record.parts = parts
-
-      return record
+      record.parts = parts;
+      return record;
     },
+
     _readPoint: function (record) {
       var s = this.stream
 
@@ -247,15 +249,6 @@
       if (!record.numPoints) {
         record.numPoints = s.readSI32();
       }
-      let npoints = record.numPoints;
-
-      while (npoints--) {
-        points.push({
-          x: s.readDouble(),
-          y: s.readDouble(),
-        });
-      }
-
       record.points = points;
 
       return record
