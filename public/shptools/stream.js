@@ -236,23 +236,26 @@ var win = self, doc = win.document, fromCharCode = String.fromCharCode, push = A
 
     readString: function (numChars) {
       var t = this, b = t._buffer;
-      if (undefined != numChars) {
-        var str = b.substr(t.offset, numChars);
+      var str = '';
+
+      if (numChars !== undefined) {
+        // 当传入 numChars 时，直接截取并更新 offset
+        str = b.substr(t.offset, numChars);
         t.offset += numChars;
       } else {
-        var chars = [], i = t.length - t.offset;
-        while (i--) {
+        // 当没有传入 numChars 时，读取直到遇到 null 字符
+        var chars = [];
+        while (t.offset < t.length) {
           var code = t.readByteAt(t.offset++);
-          if (code) {
-            chars.push(fromCharCode(code));
-          } else {
-            break;
-          }
+          if (code === 0) break; // 如果是 null 字符，停止读取
+          chars.push(fromCharCode(code));
         }
-        var str = chars.join('');
+        str = chars.join('');
       }
+
       return str;
     },
+
 
     readBool: function (numBits) {
       return !!this.readUB(numBits || 1);
