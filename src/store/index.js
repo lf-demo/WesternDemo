@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   //定义全局参数 其他页面可以直接获取state里面的内容
   state: {
-    token: '', //方法一 localStorage.getItem("token") 
+    token: '', //方法一 localStorage.getItem("token")
     //反序列化获取session会话中的 userInfo对象
     userInfo:JSON.parse(sessionStorage.getItem("userInfo"))
   },
@@ -40,9 +40,8 @@ export default new Vuex.Store({
   }
   },
   actions: {
-    
+
   },
   modules: {
-    
   }
 })
