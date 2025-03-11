@@ -1,43 +1,42 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
+const Vue = require('vue');
+const App = require('./App.vue');
+const router = require('./router');
+const store = require('./store');
 // 引入icon
-import './assets/icon/iconfont.css'
-Vue.config.productionTip = false
+require('./assets/icon/iconfont.css');
+Vue.config.productionTip = false;
 
-import Element from 'element-ui'
-import "element-ui/lib/theme-chalk/index.css"
-Vue.use(Element)
+const Element = require('element-ui');
+require("element-ui/lib/theme-chalk/index.css");
+Vue.use(Element);
 
-import axios from 'axios'
-import "./axios.js"
+const axios = require('axios');
+require("./axios.js");
 //引用全局
-Vue.prototype.$axios = axios 
-Vue.config.productionTip = false
+Vue.prototype.$axios = axios;
+Vue.config.productionTip = false;
 
-// 引入echarts
-// import echarts from 'echarts'
-
-// import echarts from 'echarts';
-import * as echarts from 'echarts';
+const echarts = require('echarts');
 Vue.prototype.$echarts = echarts;
+
 // 过滤器
-import * as custom from './utils/util'
-import ol from 'ol'
-import 'ol/ol.css'
-import "./mapOperation.js"
+const custom = require('./utils/util');
+const ol = require('ol');
+require('ol/ol.css');
+require("./mapOperation.js");
 // import Tiff from 'tiff.js'
-import Popup from 'ol-popup'
+const Popup = require('ol-popup');
 // import on your project (less then 1KB gziped)
 // import vueSmoothScroll from 'vue2-smooth-scroll'
 // Vue.use(vueSmoothScroll)
-import shp from 'shapefile';
-import togeojson from 'togeojson';
-import smooth from 'chaikin-smooth'
-import moment from 'moment'
+const shp = require('shapefile');
+const togeojson = require('togeojson');
+const smooth = require('chaikin-smooth');
+const moment = require('moment');
+
 //引入Antd
 // import "ant-design-vue/dist/antd.less";
+
 new Vue({
   router,
   store,
@@ -46,5 +45,5 @@ new Vue({
     Bus: new Vue()
   },
   render: h => h(App)
-  
-}).$mount('#app')
+
+}).$mount('#app');
