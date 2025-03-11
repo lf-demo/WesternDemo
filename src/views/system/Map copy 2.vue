@@ -1,12 +1,11 @@
 /**
- * 地图加载
- */
+* 地图加载
+*/
 <template>
   <div id="map" ref="map"></div>
 </template>
 
 <script>
-import 'ol/ol.css';
 import { Map, View } from 'ol';
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
 import { OSM, Vector as VectorSource } from 'ol/source';

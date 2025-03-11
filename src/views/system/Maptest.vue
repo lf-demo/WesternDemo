@@ -1,14 +1,11 @@
 <template>
-<div id="content">
+  <div id="content">
 
-  <div id="map" />
-</div>
+    <div id="map" />
+  </div>
 </template>
 <script>
 // 此处引用替换即可
-import 'ol/ol.css'
-import Draw from 'ol/interaction/Draw.js';
-import ol from 'ol'
 import TileLayer from 'ol/layer/Tile'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
@@ -32,18 +29,18 @@ export default {
       // mapUrl: `http://127.0.0.1:9089/maps/satellite/{z}/{x}/{y}.jpg`
       // mapUrl: `D:\\tool\\nginx-1.6.3\\nginx-1.6.3\\tiles/{z}/{x}/{y}.png`
       arr : [
-			[84.84162294291296, 10.858592623502162],
-			[85.4491131, 8.046038432],
-			[86.12413, 5.8848155],
-			[88.3149689, 1.0291548],
-		],
+        [84.84162294291296, 10.858592623502162],
+        [85.4491131, 8.046038432],
+        [86.12413, 5.8848155],
+        [88.3149689, 1.0291548],
+      ],
     }
   },
   mounted() {
     this.initMap()
-          
-        this.addPoint()
-        this.addLine()
+
+    this.addPoint()
+    this.addLine()
   },
   methods: {
     // 初始化地图
@@ -55,69 +52,69 @@ export default {
       })
       this.map = null
       this.extent =boundingExtent([
-         [40, 45], // 最左端
-         [140, -60] // 最右端
+        [40, 45], // 最左端
+        [140, -60] // 最右端
       ])
       this.map = new Map({
         layers: [tileLayer],
         view: new View({
-        center: fromLonLat([97, 24]), // 地图中心点
-        // center: this.center,
-        zoom: 6, // 初始缩放级别
-        minZoom: 5, // 最小缩放级别
-        maxZoom: 7 ,// 最大缩放级别
-        // projection: 'EPSG:4326',
-        constrainResolution: true,  // 设置缩放级别为整数 
-        smoothResolutionConstraint: false,  // 关闭无级缩放地图
-        extent: transformExtent(this.extent, 'EPSG:4326', 'EPSG:3857')// 可视范围限制
-        // extent:[60.00000,0.00000,110.00000,60.00000]
-      }),
+          center: fromLonLat([97, 24]), // 地图中心点
+          // center: this.center,
+          zoom: 6, // 初始缩放级别
+          minZoom: 5, // 最小缩放级别
+          maxZoom: 7 ,// 最大缩放级别
+          // projection: 'EPSG:4326',
+          constrainResolution: true,  // 设置缩放级别为整数
+          smoothResolutionConstraint: false,  // 关闭无级缩放地图
+          extent: transformExtent(this.extent, 'EPSG:4326', 'EPSG:3857')// 可视范围限制
+          // extent:[60.00000,0.00000,110.00000,60.00000]
+        }),
         target: 'map' // 将地图注入到 dom 元素中，此处写 dom id
-      })     
+      })
 
     },
-     // 绘制坐标点
+    // 绘制坐标点
     addPoint() {
-        var feature = new Feature({
-          title: 'beijing',
-          geometry: new Point(fromLonLat([84.84162294291296, 10.858592623502162])),
-        })
-        feature.setStyle(
-          new Style({image: new Icon({
-              src: require("@/assets/img/windblue.png"),
-              // src: require('@/assets/img/'+img),
-              scale: 1,
-            }),
-          })
-        );
-        const markerSource = new VectorSource({
-          features: [feature],
-      });
-        var layer =new VectorLayer({
-          source: markerSource,
+      var feature = new Feature({
+        title: 'beijing',
+        geometry: new Point(fromLonLat([84.84162294291296, 10.858592623502162])),
       })
-        this.map.addLayer(layer)
-        console.log('aaa')
-      },
+      feature.setStyle(
+        new Style({image: new Icon({
+            src: require("@/assets/img/windblue.png"),
+            // src: require('@/assets/img/'+img),
+            scale: 1,
+          }),
+        })
+      );
+      const markerSource = new VectorSource({
+        features: [feature],
+      });
+      var layer =new VectorLayer({
+        source: markerSource,
+      })
+      this.map.addLayer(layer)
+      console.log('aaa')
+    },
 
-      // 绘制连线
-      addLine() {
-        let featureLine = new Feature({
-          geometry: new LineString([
-            fromLonLat([84.84162294291296, 10.858592623502162]),
-            fromLonLat([88.3149689, 1.0291548]),
-          ]),
-        });
-        let source = new VectorSource()
-        source.addFeature(featureLine)
-        let layer = new VectorLayer()
-        layer.setSource(source)
-        this.map.addLayer(layer)
-      }
-  
-  
-  
-      
+    // 绘制连线
+    addLine() {
+      let featureLine = new Feature({
+        geometry: new LineString([
+          fromLonLat([84.84162294291296, 10.858592623502162]),
+          fromLonLat([88.3149689, 1.0291548]),
+        ]),
+      });
+      let source = new VectorSource()
+      source.addFeature(featureLine)
+      let layer = new VectorLayer()
+      layer.setSource(source)
+      this.map.addLayer(layer)
+    }
+
+
+
+
   }
 }
 </script>

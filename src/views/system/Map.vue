@@ -4,19 +4,19 @@
     <div id="map" />
     <flowtype class="ftype" ></flowtype>
     <mood class="fmood" ></mood>
-   <!-- 弹框 dom -->
+    <!-- 弹框 dom -->
     <!-- <div id="popup" ref="mapContent" v-html="mapText"></div> -->
     <card id="popup"  :pointName = "pointName" :pointLon = "pointLon" :pointLat = "pointLat" :pointInfo = "pointInfo" :pointcatagory = "pointcatagory"></card>
     <windcard id="windpopup" class="windpopup" :pointLon = "pointLon" :date = "date" :pointLat = "pointLat" :wind = "rwind"></windcard>
     <div id="dialogmask" class="dialogmask opacity"></div>
     <div id="dialog" class="box" style="display: none">
-    <div id="dialog_title" class="dialogtitle" style="">
+      <div id="dialog_title" class="dialogtitle" style="">
         <!-- <label style="padding-left: 10px">执行结果</label> -->
         <el-button  icon="el-icon-close" plain @click="closepop" style="float: right;margin-right: 10px; width:38px ; border:0px"></el-button>
-    </div>
-    <div id="dialog_content" class="dialogcontent">
+      </div>
+      <div id="dialog_content" class="dialogcontent">
         <div id="logcontent" class="logcontent"><datatable/></div>
-    </div>
+      </div>
     </div>
   </div>
 </template>
@@ -26,8 +26,6 @@ import mood from '@/components/map/mood'
 import card from '@/components/map/card'
 import windcard from '@/components/map/windcard'
 import datatable from '@/components/map/dataChart'
-import 'ol/ol.css'
-// import TileLayer from 'ol/layer/Tile'
 import XYZ from 'ol/source/XYZ'
 import { Map, View, Feature, Overlay } from 'ol'
 import { fromLonLat, transform,Projection } from 'ol/proj'
@@ -52,19 +50,7 @@ export default {
   data() {
     return {
       map: null,
-      // 瓦片引入地址 nginx
-      // mapUrl: `http://127.0.0.1:9098/tiles/{z}/{x}/{y}.png`
-      // 瓦片本地引入 瓦片等级越高加载编译越慢
-      // 在 public 下新建 tiles 文件夹，将下好的瓦片放进去
-      // mapUrltitle:`http://127.0.0.1:8088/maps/overlay/{z}/{x}/{y}.png`,
       mapUrltitle:`/maps/overlay/{z}/{x}/{y}.png`,
-          //添加这个范围 经度-最小，纬度-最小，经度-最大，纬度-最大
-      // mapUrl: `http://127.0.0.1:9089/tiles/{z}/{x}/{y}.png`
-      // mapUrl: `http://127.0.0.1:9089/maps/overlay/{z}/{x}/{y}.png`,
-      // mapUrl: `http://127.0.0.1:8088/maps/overlay/{z}/{x}/{y}.png`,
-      // mapUrl: `http://127.0.0.1:9089/maps/roadmap/{z}/{x}/{y}.png`,
-      // mapUrl: `http://127.0.0.1:8088/maps/roadmap/{z}/{x}/{y}.png`,
-      // mapUrl: `http://127.0.0.1:8088/maps/roadmap/{z}/{x}/{y}.png`,
       mapUrl: `/maps/roadmap/{z}/{x}/{y}.png`,
       // mapUrl: `http://127.0.0.1:8088/maps/satellite/{z}/{x}/{y}.jpg`,
       // mapUrl: `http://127.0.0.1:9089/maps/satellite/{z}/{x}/{y}.jpg`,
@@ -88,37 +74,7 @@ export default {
       xuegailayer:null,
       xueshenlayer:null,
       snowdeeptoolbar:null,
-      wind:[{
-        id:1,
-        lat: -12.782003150495882,
-        lng: 75.76483286783369,
-        date:"2022-01-25",
-        name:"台风1",
-        wind:2,
-      }, 
-      {
-        id:5,
-        lat: -13.016729566396549,
-        lng: 72.68734038075482,
-        name:"台风2",
-        date:"2022-01-24",
-        wind:3,
-      },{
-        id:2,
-        lat: -13.753958059670964,
-        lng: 70.76752660452871,
-        name:"台风2",
-        date:"2022-01-23",
-        wind:3,
-      }, 
-      {
-        id:3,
-        lat:-14.831008643808147,
-        lng: 68.89823576091288,
-        name:"台风3",
-        date:"2022-01-22",
-        wind:4,
-      }
+      wind:[
       ],
       currentwind:{
         id:1,
@@ -135,17 +91,17 @@ export default {
         wind:2,
       },
       data:[{
-          id: 1,
-          lat: 18.161447635552065,
-          lng: 88.27717005586338,
-          name: "浮标",
-          properties: {
-            // 标记属性
-            info: "This is Point A",
-            catagory:1,
-            typename:"种类1",
-          },
+        id: 1,
+        lat: 18.161447635552065,
+        lng: 88.27717005586338,
+        name: "浮标",
+        properties: {
+          // 标记属性
+          info: "This is Point A",
+          catagory:1,
+          typename:"种类1",
         },
+      },
         {
           id: 2,
           lat: 24,
@@ -158,8 +114,7 @@ export default {
             typename:"种类2",
           },
         }],
-      
-      // mapUrl: `D:\\tool\\nginx-1.6.3\\nginx-1.6.3\\tiles/{z}/{x}/{y}.png`
+
     }
   },
   components: {
@@ -174,13 +129,6 @@ export default {
   mounted() {
     this.initMap()
     this.createWindMarker()
-    // this.getMarkerData(1)
-    // this.createByType(1)
-    // 读取 JSON 文件
-    // axios.get('')
-    // console.log(station_data)
-    // console.log(buoy_data)
-
   },
   methods: {
     // 初始化地图
@@ -197,57 +145,35 @@ export default {
       })
       this.map = null
       this.extent =boundingExtent([
-         [40, 51], // 最左端
-         [140, -60] // 最右端
+        [40, 51], // 最左端
+        [140, -60] // 最右端
       ])
       this.map = new Map({
         target: 'map', // 将地图注入到 dom 元素中，此处写 dom id
         layers: [mapLayer],
         view: new View({
-            center: fromLonLat([85.4216, 19.946]), // 地图中心点
-            // center: this.center,
-            zoom: 4, // 初始缩放级别
-            minZoom: 4, // 最小缩放级别
-            maxZoom:9 ,// 最大缩放级别
-            // extent:[30.00000,-60.00000,135.00000,40.00000]
-            // extent:[30.00000, -60.00000, 135.00000, 40]
-            extent: transformExtent(this.extent, 'EPSG:4326', 'EPSG:3857'),// 可视范围限制
+          center: fromLonLat([85.4216, 19.946]), // 地图中心点
+          // center: this.center,
+          zoom: 4, // 初始缩放级别
+          minZoom: 4, // 最小缩放级别
+          maxZoom:9 ,// 最大缩放级别
+          // extent:[30.00000,-60.00000,135.00000,40.00000]
+          // extent:[30.00000, -60.00000, 135.00000, 40]
+          extent: transformExtent(this.extent, 'EPSG:4326', 'EPSG:3857'),// 可视范围限制
         }), controls: defaultControls({
-              zoom: false,
-              rotate: false,
-              attribution: false
-            }).extend([
-                new ScaleLine({
-                  //设置比例尺单位，degrees、imperial、us、nautical、metric（度量单位）
-                  units: "metric"
-                })
-              ])
-          
-        
-      })
-      // // 定义栅格数据的投影信息
-      // const projection = new Projection({
-      //   code: 'EPSG:4326',
-      //   // code: 'EPSG:3857',
-      //   units: 'degrees',
-      //   extent: [83.63764452794805, 45.522127022756756, 94.14344177572586, 50.440403203311135]
-      // });
-      // const imageLayer = new ImageLayer({
-      //   source: new ImageStatic({
-      //     url:`http://127.0.0.1:9089/maps/img/test.tif`,
-      //     projection: projection,
-      //     imageExtent: [83.63764452794805, 45.522127022756756, 94.14344177572586, 50.440403203311135]
-      //     // imageExtent: [-180, -90, 180, 90]
-      //   })
-      // });
-      // console.log("imageLayer.url,",imageLayer.url)
-      // this.map.addLayer(imageLayer);
-      // 初始化地图之后就将弹框挂载好，后续只是修改显示的位置
-            const testData = JSON.parse(localStorage.getItem('testData'));
+          zoom: false,
+          rotate: false,
+          attribution: false
+        }).extend([
+          new ScaleLine({
+            //设置比例尺单位，degrees、imperial、us、nautical、metric（度量单位）
+            units: "metric"
+          })
+        ])
 
-      if(!testData || testData == null || testData==[]){
-       testData = this.savatestdata()
-      }
+
+      })
+      const testData = JSON.parse(localStorage.getItem('testData'));
       this.data = testData
       this.createOverlayInfo()
       this.createOverlayTable()
@@ -267,59 +193,25 @@ export default {
     savatestdata(){
       var testdata = []
       for(var i =0;i<194;i++){
-      // for(var i =0;i<15;i++){
-          var item = station_data[i]
+        // for(var i =0;i<15;i++){
+        var item = station_data[i]
         // if(item.name == 'station')
-          item.name = '站点'
-          testdata.push(item)
-          // if( i  == 1)
-          //   console.log(item)
+        item.name = '站点'
+        testdata.push(item)
+        // if( i  == 1)
+        //   console.log(item)
       }
       for(var j = 0;j<1254;j++){
-      // for(var i = 0;i<14;i++){
-          var item = buoy_data[j]
+        // for(var i = 0;i<14;i++){
+        var item = buoy_data[j]
         // if(item.name == 'station')
-          // item.name = '浮标'
-          testdata.push(item)
+        // item.name = '浮标'
+        testdata.push(item)
       }
-    // for(var i =0;i<57;i++){
-    //     var item1 = {
-    //       id: 10+i,
-    //       lat: 18.161447635552065-Math.random() * 27,
-    //       lng: 90+Math.random() * 27,
-    //       name: "浮标",
-    //       properties: {
-    //         // 标记属性
-    //         info: "This is Point B",
-    //         catagory:1,
-    //         typename:"浮标",
-    //       },
-    //     }
-    //     var item2 = {
-    //       id: 2,
-    //       lat: 24+Math.random() * 27,
-    //       lng: 87+Math.random() * 27,
-    //       name: "站点",
-    //       properties: {
-    //         // 标记属性
-    //         info: "This is Point B",
-    //         catagory:2,
-    //         typename:"种类2",
-    //       },
-    //     }
-    //     // console.log((this.data).length)
-    //     // console.log((this.data).length)
-    //     testdata.push(item1)
-    //     testdata.push(item2)
-    //     if(i ==1){
-    //       console.log(item1)
-    //       console.log(item2)
-    //     }
-    //   }
 
-    // 将数据保存到本地存储
-    localStorage.setItem('testData', JSON.stringify(testdata));
-    return testdata
+      // 将数据保存到本地存储
+      localStorage.setItem('testData', JSON.stringify(testdata));
+      return testdata
     },
     checkLat(lat){
       var tlat =""
@@ -344,12 +236,12 @@ export default {
       if(catagory == 1){
         typeName = '种类1'
         imgflag = 'flew.png'
-      }  
-        
+      }
+
       else{
         typeName = '种类2'
         imgflag = 'station.png'
-      }        
+      }
       var marker = new Feature({
         id: coord.id,
         geometry: new Point(coord.point),
@@ -371,103 +263,36 @@ export default {
       return marker;
     },
     createMarker(coord,catagory) {
-        
-      // // 创建标记要素
-      // let marker = new Feature({
-      //   id: coord.id,
-      //   geometry: new Point(coord.point),
-      //   name: coord.name,
-      //   info: coord.properties.info,
-      //   latlng:coord.point,
-      //   catagory:coord.properties.catagory,
-      //   typename:coord.properties.typename,
-      // });
-
-      // // 设置标记样式
-      // marker.setStyle(
-      //   new Style({
-      //     image: new Icon({
-      //       src: require("@/assets/marker-icon.png"),
-      //       scale: 1,
-      //     }),
-      //   })
-      // );
       var layer = null
       var marker = this.setTypeFeature(coord,catagory)
       const markerSource = new VectorSource({
-          features: [marker],
+        features: [marker],
       });
       layer =new VectorLayer({
-          source: markerSource,
+        source: markerSource,
       })
       if(catagory ==1){
 
-          this.layer1.push(layer)
-          // console.log(this.layer1.length)
+        this.layer1.push(layer)
+        // console.log(this.layer1.length)
 
       }else if(catagory ==2){
         this.layer2.push(layer)
-          // console.log(this.layer2.length)
+        // console.log(this.layer2.length)
       }
       this.map.addLayer(
         layer
-      ); 
-      // if(catagory ==1){
-      //   if( this.layer1 == null){
-      //     var marker = this.setTypeFeature(coord,catagory)
-      //     const markerSource = new VectorSource({
-      //       features: [marker],
-      //     });
-      //     this.layer1 =new VectorLayer({
-      //         source: markerSource,
-      //       })
-      //     console.log(this.layer1)
-      //     this.map.addLayer(
-      //       this.layer1
-      //     ); 
-      //   }
-      //   else{
-      //     console.log("种类",catagory,"已添加")
-      //   }
-      // }else if(catagory ==2){
-      //     if( this.layer2 == null){
-      //       var marker = this.setTypeFeature(coord,catagory)
-      //       const markerSource = new VectorSource({
-      //         features: [marker],
-      //       });
-      //       this.layer2 = new VectorLayer({
-      //           source: markerSource,
-      //         })
-      //       this.map.addLayer(
-      //         this.layer2
-      //       ); 
-      //     }
-      //     else{
-      //       console.log("种类",catagory,"已添加")
-      //     }
-      // }
-      
-      
-    //   // 存储标记信息
-    //   this.markers.push({
-    //     id: coord.id,
-    //     coordinate: coord.point,
-    //     name: coord.name,
-    //     properties: {
-    //       // 标记属性
-    //       info: coord.properties.info,
-    //     },
-    //   });
+      );
     },
     removeMarker(coord,catagory) {
-        
+
       if(catagory ==1){
-          for(let i = 0; i　< this.layer1.length; i++)
-            this.map.removeLayer(this.layer1[i])
-        
+        for(let i = 0; i　< this.layer1.length; i++)
+          this.map.removeLayer(this.layer1[i])
+
       }else if(catagory ==2){
-          for(let i = 0; i< this.layer2.length; i++)
-            this.map.removeLayer(this.layer2[i])
+        for(let i = 0; i< this.layer2.length; i++)
+          this.map.removeLayer(this.layer2[i])
       }
     },
 
@@ -491,9 +316,9 @@ export default {
           };
           this.createMarker(coord,type);
         }
-        
+
       });
-      
+
     },
     addmarkers(type){
       if(type ==1){
@@ -501,19 +326,19 @@ export default {
         // console.log(this.layer1)
         if( this.layer1.length == 0){
           this.createByType(type)
-          
+
         }
         else{
           // console.log("种类",type,"已添加")
         }
       }else if(type ==2){
-          if( this.layer2.length == 0){
-            this.createByType(type)
-          }
-          else{
-            // console.log("种类",type,"已添加")
-          }
-    }
+        if( this.layer2.length == 0){
+          this.createByType(type)
+        }
+        else{
+          // console.log("种类",type,"已添加")
+        }
+      }
     },
     deletemarkers(type){
       if(type ==1){
@@ -526,15 +351,15 @@ export default {
           console.log("种类",catagory,"不存在")
         }
       }else if(type ==2){
-          if( this.layer2.length != 0){
-            this.removeByType(type)
-            this.layer2 = []
+        if( this.layer2.length != 0){
+          this.removeByType(type)
+          this.layer2 = []
 
-          }
-          else{
-            console.log("种类",catagory,"不存在")
-          }
-    }
+        }
+        else{
+          console.log("种类",catagory,"不存在")
+        }
+      }
     },
     removeByType(type) {
       // 将数据转换为标记并添加到地图上
@@ -553,21 +378,21 @@ export default {
           };
           this.removeMarker(coord,type);
         }
-        
+
       });
-      
+
     },
     createOverlayInfo () {
       this.overlayInfo= new Overlay({
-          element: document.querySelector('#popup'), // 将弹框挂载在 dom 上
-          // element: this.mapContent, // 将弹框挂载在 dom 上
-          // element: this.mapContent.value, // 将弹框挂载在 dom 上
-          autoPan: true, // 如果弹框显示不全则自动归位
-          positioning: 'bottom-center', // 相对于其位置属性的实际位置
-          stopEvent: true, // 事件冒泡
-          autoPanAnimation: {
-            duration: 300 // 地图移动速度
-          },
+        element: document.querySelector('#popup'), // 将弹框挂载在 dom 上
+        // element: this.mapContent, // 将弹框挂载在 dom 上
+        // element: this.mapContent.value, // 将弹框挂载在 dom 上
+        autoPan: true, // 如果弹框显示不全则自动归位
+        positioning: 'bottom-center', // 相对于其位置属性的实际位置
+        stopEvent: true, // 事件冒泡
+        autoPanAnimation: {
+          duration: 300 // 地图移动速度
+        },
       })
       this.map.addOverlay(this.overlayInfo)
     },
@@ -579,15 +404,15 @@ export default {
     //创建台风信息展示
     createOverlayWindInfo () {
       this.overlayWindInfo= new Overlay({
-          element: document.querySelector('#windpopup'), // 将弹框挂载在 dom 上
-          // element: this.mapContent, // 将弹框挂载在 dom 上
-          // element: this.mapContent.value, // 将弹框挂载在 dom 上
-          autoPan: true, // 如果弹框显示不全则自动归位
-          positioning: 'bottom-center', // 相对于其位置属性的实际位置
-          stopEvent: true, // 事件冒泡
-          autoPanAnimation: {
-            duration: 300 // 地图移动速度
-          },
+        element: document.querySelector('#windpopup'), // 将弹框挂载在 dom 上
+        // element: this.mapContent, // 将弹框挂载在 dom 上
+        // element: this.mapContent.value, // 将弹框挂载在 dom 上
+        autoPan: true, // 如果弹框显示不全则自动归位
+        positioning: 'bottom-center', // 相对于其位置属性的实际位置
+        stopEvent: true, // 事件冒泡
+        autoPanAnimation: {
+          duration: 300 // 地图移动速度
+        },
       })
       this.map.addOverlay(this.overlayWindInfo)
     },
@@ -597,15 +422,15 @@ export default {
     },
     createOverlayTable () {
       this.overlayTable= new Overlay({
-          element: document.querySelector('#popuptable'), // 将弹框挂载在 dom 上
-          // element: this.mapContent, // 将弹框挂载在 dom 上
-          // element: this.mapContent.value, // 将弹框挂载在 dom 上
-          autoPan: true, // 如果弹框显示不全则自动归位
-          positioning: 'bottom-center', // 相对于其位置属性的实际位置
-          stopEvent: true, // 事件冒泡
-          autoPanAnimation: {
-            duration: 300 // 地图移动速度
-          },
+        element: document.querySelector('#popuptable'), // 将弹框挂载在 dom 上
+        // element: this.mapContent, // 将弹框挂载在 dom 上
+        // element: this.mapContent.value, // 将弹框挂载在 dom 上
+        autoPan: true, // 如果弹框显示不全则自动归位
+        positioning: 'bottom-center', // 相对于其位置属性的实际位置
+        stopEvent: true, // 事件冒泡
+        autoPanAnimation: {
+          duration: 300 // 地图移动速度
+        },
       })
       this.map.addOverlay(this.overlayTable)
     },
@@ -656,8 +481,8 @@ export default {
       // // 判断当前点击是否点击在图标上
       const feature = this.map.forEachFeatureAtPixel(e.pixel, (feature) => feature)
       if (feature &&  feature.values_.catagory == 2) {
-      // if () {
-      // if (feature) {
+        // if () {
+        // if (feature) {
         var latlng = transform(feature.values_.latlng, 'EPSG:3857', 'EPSG:4326')
         // console.log("geometry",feature.values_.latlng)
         this.pointName  = feature.values_.name
@@ -677,14 +502,14 @@ export default {
     },
     //显示弹框，并且根据结果是true或false来更改标题部分的颜色
     showlog_result(info) {//展示具体弹框内容，以及根据结果是否正确变更title的颜色
-        $("#dialog").css({display: "block"});//通过Jquery的css()更改样式
-        $("#dialogmask").css({display: "block"});
-        $("#logcontent").html(info);
-        $("#dialog_title").css({background: "#00CC00"});
+      $("#dialog").css({display: "block"});//通过Jquery的css()更改样式
+      $("#dialogmask").css({display: "block"});
+      $("#logcontent").html(info);
+      $("#dialog_title").css({background: "#00CC00"});
     },
     closepop() {//关闭弹框
-        $("#dialog").css({display: "none"});
-        $("#dialogmask").css({display: "none"});
+      $("#dialog").css({display: "none"});
+      $("#dialogmask").css({display: "none"});
     },
     creatWindFeature(data){
       var feature = new Feature({
@@ -703,14 +528,14 @@ export default {
     },
     addWindToMap(feature){
       const markerSource = new VectorSource({
-          features: [feature],
+        features: [feature],
       });
       var layer =new VectorLayer({
-          source: markerSource,
+        source: markerSource,
       })
       this.map.addLayer(
         layer
-      ); 
+      );
       // console.log(layer)
     },
     //通过风强渡判断预警等级
@@ -723,35 +548,27 @@ export default {
         color = "white"
         // twind = "风力小于6级"
       }
-        
+
       else if(wind==1){
         color = "blue"
         // twind = "热带低压"
       }
-        
+
       else if(wind==2){
-         color = 'yellow'
+        color = 'yellow'
         //  twind = '热带风暴'
       }
-       
+
       else if(wind==3){
-          color = 'orange'
-          // twind = '强热带风暴'
+        color = 'orange'
+        // twind = '强热带风暴'
       }
-        
+
       else if(wind>=4){
         color = 'red'
-        
-      }
-        src = color+".png"
-      // if(time == 1)//1表示当前
-      //   // src = "@/assets/img/wind"+color+".png"
-      //    src = `wind${color}.png`
 
-      // if(time == 2)//1表示当前
-      //   src = "prewind"+color+".png"
-      // console.log(color)
-      // console.log(src)
+      }
+      src = color+".png"
       return color
 
     },
@@ -762,30 +579,30 @@ export default {
         // color = "white"
         twind = "风力小于6级"
       }
-        
+
       else if(wind==1){
         // color = "blue"
         twind = "热带低压"
       }
-        
+
       else if(wind==2){
         //  color = 'yellow'
-         twind = '热带风暴'
+        twind = '热带风暴'
       }
-       
+
       else if(wind==3){
-          // color = 'orange'
-          twind = '强热带风暴'
+        // color = 'orange'
+        twind = '强热带风暴'
       }
-        
+
       else if(wind == 4)
-          twind = '台风'
+        twind = '台风'
       else if(wind == 5)
-          twind ='强台风'
+        twind ='强台风'
       else if(wind == 6)
-          twind = '超强台风'
-        
-      
+        twind = '超强台风'
+
+
       return twind
     },
     // 绘制连线
@@ -804,10 +621,10 @@ export default {
     },
     createWindMarker() {
       // var layer = null
-        var lenth = this.wind.length
-        const wind = this.wind
-        var zoom = this.map.getView().getZoom()
-        this.wind.forEach((w,i)=>{
+      var lenth = this.wind.length
+      const wind = this.wind
+      var zoom = this.map.getView().getZoom()
+      this.wind.forEach((w,i)=>{
         // var feature = this.creatWindFeature(this.wind[i])
         this.map.removeLayer(this.creatWindFeature(this.wind[i]))
         var feature = this.creatWindFeature(this.wind[i])
@@ -815,63 +632,32 @@ export default {
         // if(i == 0){
         // if(i != 0){
         var color = this.checkpic(w.wind,1)
-        // console.log(color)
-        // if(zoom <6){
-        //     // feature.setStyle(null);
-        //     this.map.removeLayer(feature)
-        //     feature.setStyle(
-        //       new Style({
-        //         image: new CircleStyle({
-        //         radius: 15-9+zoom,
-        //         stroke: new Stroke({
-        //           // color: "blue",
-        //           color:'black',
-        //         }),
-        //         fill: new Fill({
-        //           // color: "rgba(24,144,255,100)",
-        //           color: ''+color,
-        //         }),
-        //       }),
-        //       text: new Text({
-        //         text: (lenth-i).toString(),
-        //         fill: new Fill({
-        //           color: "#FFF",
-        //         }),
-        //         font: "11px Calibri,sans-serif",
-        //         stroke: new Stroke({
-        //           color: "red",
-        //           width: 4,
-        //         }),
-        //       }),
-        //     }));
-        //   }else{
-            // feature.setStyle(null);
-            feature.setStyle(
-              new Style({
-                image: new Icon({
-                  // src: require("@/assets/img/windblue.png"),
-                  src: require('@/assets/typhoon/'+color+'.png'),
-                  scale: (0.11*zoom)<0.55 ? (0.1*zoom):(0.14*zoom),
+        feature.setStyle(
+          new Style({
+              image: new Icon({
+                // src: require("@/assets/img/windblue.png"),
+                src: require('@/assets/typhoon/'+color+'.png'),
+                scale: (0.11*zoom)<0.55 ? (0.1*zoom):(0.14*zoom),
+              }),
+              text: new Text({
+                text: (lenth-i).toString(),
+                fill: new Fill({
+                  color: "#FFF",
                 }),
-                text: new Text({
-                  text: (lenth-i).toString(),
-                  fill: new Fill({
-                    color: "#FFF",
-                  }),
-                  font: "12px Calibri,sans-serif",
-                  stroke: new Stroke({
-                    color: "red",
-                    width: 5,
-                  }),
+                font: "12px Calibri,sans-serif",
+                stroke: new Stroke({
+                  color: "red",
+                  width: 5,
                 }),
-              }
-            ));
-          // }
-          if( i != 0)
-            this.addLine(fromLonLat([wind[i].lng,wind[i].lat]),fromLonLat([wind[i-1].lng,wind[i-1].lat]))         
+              }),
+            }
+          ));
+        // }
+        if( i != 0)
+          this.addLine(fromLonLat([wind[i].lng,wind[i].lat]),fromLonLat([wind[i-1].lng,wind[i-1].lat]))
         this.addWindToMap(feature)
       })
-    }, 
+    },
     focusonpoint(zoom,center){
       this.map.getView().setZoom(zoom)
       this.map.getView().setCenter(fromLonLat(center))
@@ -880,9 +666,9 @@ export default {
       // var url= "@/assets/layers/xuegai.png"
       var url=`/maps/img/indexshow/2022012521_IR.png`
       // console.log(url)
-      
+
       const extent =[40,-60, 135, 30.1]
-    // const extent = [83.63764452794805, 25, 94.14344177572586, 25+4.91827620055438]
+      // const extent = [83.63764452794805, 25, 94.14344177572586, 25+4.91827620055438]
       // 定义栅格数据的投影信息
       const projection = new Projection({
         // code: 'EPSG:4326',
@@ -894,14 +680,14 @@ export default {
       // var url = '@/assets/sortkinds/test.png'
       // console.log(url)
       this.hongwailayer = new ImageLayer({
-            source: new ImageStatic({
-              url: url,//地址
-              projection: projection,
-              imageExtent:  transformExtent(extent, 'EPSG:4326', 'EPSG:3857')
-            }),
-                        visible: false,
+        source: new ImageStatic({
+          url: url,//地址
+          projection: projection,
+          imageExtent:  transformExtent(extent, 'EPSG:4326', 'EPSG:3857')
+        }),
+        visible: false,
 
-          })
+      })
       this.map.addLayer(this.hongwailayer)
       // this.focusonpoint(6,[(extent[0]+extent[2])/2,(extent[1]+extent[3])/2])
       // console.log(222)
@@ -910,9 +696,9 @@ export default {
       // var url= "@/assets/layers/xuegai.png"
       var url=`/maps/img/indexshow/aa1.png`
       // console.log(url)
-      
+
       const extent =[72.583875,26.644031,  95.365151, 35.788881]
-    // const extent = [83.63764452794805, 25, 94.14344177572586, 25+4.91827620055438]
+      // const extent = [83.63764452794805, 25, 94.14344177572586, 25+4.91827620055438]
       // 定义栅格数据的投影信息
       const projection = new Projection({
         // code: 'EPSG:4326',
@@ -924,13 +710,13 @@ export default {
       // var url = '@/assets/sortkinds/test.png'
       // console.log(url)
       this.xuegailayer = new ImageLayer({
-            source: new ImageStatic({
-              url: url,//地址
-              projection: projection,
-              imageExtent:  transformExtent(extent, 'EPSG:4326', 'EPSG:3857')
-            }),
-            visible: false,
-          })
+        source: new ImageStatic({
+          url: url,//地址
+          projection: projection,
+          imageExtent:  transformExtent(extent, 'EPSG:4326', 'EPSG:3857')
+        }),
+        visible: false,
+      })
       this.map.addLayer(this.xuegailayer)
       // this.focusonpoint(6,fromLonLat([(extent[0]+extent[2])/2,(extent[1]+extent[3])/2]))
       // console.log(222)
@@ -939,9 +725,9 @@ export default {
       // var url= "@/assets/layers/xuegai.png"
       var url=`/maps/img/indexshow/snowdeep.png`
       // console.log(url)
-      
+
       const extent =[72.583875,26.644031,  95.365151, 35.788881]
-    // const extent = [83.63764452794805, 25, 94.14344177572586, 25+4.91827620055438]
+      // const extent = [83.63764452794805, 25, 94.14344177572586, 25+4.91827620055438]
       // 定义栅格数据的投影信息
       const projection = new Projection({
         // code: 'EPSG:4326',
@@ -953,24 +739,24 @@ export default {
       // var url = '@/assets/sortkinds/test.png'
       // console.log(url)
       this.xueshenlayer = new ImageLayer({
-            source: new ImageStatic({
-              url: url,//地址
-              projection: projection,
-              imageExtent:  transformExtent(extent, 'EPSG:4326', 'EPSG:3857')
-            }),
-            visible: false,
-          })
+        source: new ImageStatic({
+          url: url,//地址
+          projection: projection,
+          imageExtent:  transformExtent(extent, 'EPSG:4326', 'EPSG:3857')
+        }),
+        visible: false,
+      })
       var imgurl = `/maps/img/indexshow/toolbar.png`
       var toolbarextent = [72.583875,23,95.365151,25.5]
 
       this.snowdeeptoolbar = new ImageLayer({
-            source: new ImageStatic({
-              url: imgurl,//地址
-              projection: projection,
-              imageExtent: transformExtent(toolbarextent, 'EPSG:4326', 'EPSG:3857')
-            }),
-            visible: false,
-          })
+        source: new ImageStatic({
+          url: imgurl,//地址
+          projection: projection,
+          imageExtent: transformExtent(toolbarextent, 'EPSG:4326', 'EPSG:3857')
+        }),
+        visible: false,
+      })
       this.map.addLayer(this.xueshenlayer)
       this.map.addLayer(this.snowdeeptoolbar)
       // this.focusonpoint(6,fromLonLat([(extent[0]+extent[2])/2,(toolbarextent[1]+extent[3])/2]))
@@ -998,23 +784,23 @@ export default {
         case 2: this.xueshenlayer.setVisible(false);this.snowdeeptoolbar.setVisible(false);break;
       }
     },
-        /*
-        checkocculays(i){
-      switch(i){
-        case 0: this.createhongwaiLayer();break;
-        case 1: this.createSnowDetectionLayer();break;
-        case 2: this.createSnowDetectionLayer();break;
-      }
-    },
-    checkdisplays(i){
-      switch(i){
-        case 0: this.checkLayer(this.hongwailayer);break;
-        case 1: this.checkLayer(this.xuegailayer);break;
-        case 2: this.checkLayer(this.xuegailayer);break;
-      }
-    }
-    */
-    
+    /*
+    checkocculays(i){
+  switch(i){
+    case 0: this.createhongwaiLayer();break;
+    case 1: this.createSnowDetectionLayer();break;
+    case 2: this.createSnowDetectionLayer();break;
+  }
+},
+checkdisplays(i){
+  switch(i){
+    case 0: this.checkLayer(this.hongwailayer);break;
+    case 1: this.checkLayer(this.xuegailayer);break;
+    case 2: this.checkLayer(this.xuegailayer);break;
+  }
+}
+*/
+
   }
 
 }
@@ -1060,106 +846,93 @@ export default {
 .ftype{
   position:absolute;
   /* position: relative; */
-  z-index:998; 
+  z-index:998;
   top:90px;
   /* left: 300px; */
 }
 .fmood{
   position:absolute;
   /* position: relative; */
-  z-index:998; 
+  z-index:998;
   top:90px;
   right: 15px;
   /* left: 300px; */
 }
-.dialogmask {
-    /* position: fixed; */
-    position: absolute;
-    top: 82px;
-    left:60px;
-    height:calc(100vh-90px-47px);
-    min-height: 859px;
-    /* width: calc(100vh-64px) !important; */
-    width: 1843px;
-    z-index: 999;
-    display: none;
-
-}
 
 .opacity { /*遮罩浑浊处理*/
-    opacity: 0.3;
-    filter: alpha(opacity=30);
-    background-color: #000;
+  opacity: 0.3;
+  filter: alpha(opacity=30);
+  background-color: #000;
 }
 
 .box {
-    /* overflow: hidden; */
-    position: absolute;
-    width: 1000px;
-    height: 500px;
-    z-index: 1000; /*值越大，和其他层层叠时越在上面*/
-    left: 25%;
-    top: 15%;
-    background-color: #fff;
-    /* border: 1px solid rgb(0, 153, 153); */
+  /* overflow: hidden; */
+  position: absolute;
+  width: 1000px;
+  height: 500px;
+  z-index: 1000; /*值越大，和其他层层叠时越在上面*/
+  left: 25%;
+  top: 15%;
+  background-color: #fff;
+  /* border: 1px solid rgb(0, 153, 153); */
 }
 
 .dialogtitle {
-    width: 100%;
-    height: 44px;
-    line-height: 30px;
-    position: absolute;
-    font-size: 18px;
-    top: 0px;
-    background: white ! important ;
+  width: 100%;
+  height: 44px;
+  line-height: 30px;
+  position: absolute;
+  font-size: 18px;
+  top: 0px;
+  background: white ! important ;
 }
 
 .dialogcontent {
-    padding-top: 45px;
-    /* OVERFLOW: scroll; */
-    height: calc(100% - 20px);
-    height: -webkit-calc(100% - 20px);
-    background: white;
-    padding-left: 15px;
+  padding-top: 45px;
+  /* OVERFLOW: scroll; */
+  height: calc(100% - 20px);
+  height: -webkit-calc(100% - 20px);
+  background: white;
+  padding-left: 15px;
 }
 
 .logcontent {
-    padding: 10px;
+  padding: 10px;
 }
 .windpopup {
-    position: absolute;
-    background-color: rgba(255, 255, 255, 0.6) ;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-    padding: 15px;
-    border-radius: 10px;
-    /* border: 1px solid #cccccc; */
-    bottom: 12px;
-    left: -50px;
-    min-width: 280px;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.6) ;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 10px;
+  /* border: 1px solid #cccccc; */
+  bottom: 12px;
+  left: -50px;
+  min-width: 280px;
 }
- .windpopup:after,
+.windpopup:after,
 .windpopup:before {
-    top: 100%;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
 }
 
 .windpopup:after {
-    border-top-color: rgba(255, 255, 255, 0.5);
-    border-width: 10px;
-    left: 48px;
-    margin-left: -10px;
+  border-top-color: rgba(255, 255, 255, 0.5);
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px;
 }
 
 .windpopup:before {
-    border-top-color:  rgba(255, 255, 255, 0.5);
-    border-width: 11px;
-    left: 48px;
-    margin-left: -11px;
-} 
+  border-top-color:  rgba(255, 255, 255, 0.5);
+  border-width: 11px;
+  left: 48px;
+  margin-left: -11px;
+}
 
 </style>
