@@ -210,7 +210,7 @@ export default class OLMAP {
     var map = new Map({
       layers: layersOption, target: this.targetId, view: new View({
         center: centerPosition, zoom: this.defaultZoomLevel, minZoom: 4, projection: projection
-      }),
+      })
     });
     this.map2d = map;
   }

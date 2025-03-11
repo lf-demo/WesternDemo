@@ -184,23 +184,26 @@ export default {
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear();
         const currentMonth = currentDate.getMonth() + 1;
-        const selectedYear = parseInt(this.year);
-        const selectedMonth = parseInt(this.month);
+        const selectedYear = Number(this.year);
+        const selectedMonth = Number(this.month);
 
         if (!selectedYear || !selectedMonth) {
           this.dayOptions = [];
           return;
         }
 
+        // 计算选中月份的天数
         let daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
 
+        // 如果是当年当月，限制到今天
         if (selectedYear === currentYear && selectedMonth === currentMonth) {
           daysInMonth = currentDate.getDate();
         }
 
-        this.dayOptions = this.generateOptions(daysInMonth);
-      }
-    },
+        // 直接使用 Array.from 生成日期数组
+        this.dayOptions = Array.from({ length: daysInMonth }, (_, i) => this.checkmore10(i + 1));
+      },
+
 
     inithourOptions() {
       this.hourOptions = []
